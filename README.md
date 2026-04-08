@@ -1,2 +1,2 @@
 # navigation_for_4WS_robot
-Navigation for the four-wheel steering robot. 四舵轮移动机器人的导航。
+本项目利用Nav2来实现四舵轮机器人的导航功能。
