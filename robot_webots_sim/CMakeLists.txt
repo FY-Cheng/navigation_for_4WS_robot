@@ -13,7 +13,50 @@ find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
-find_package(std_msg REQUIRED)
+find_package(std_msgs REQUIRED)
+
+include_directories(
+  /usr/local/webots/include/controller/c
+)
+
+# 库文件路径
+link_directories(
+  /usr/local/webots/lib/controller
+)
+
+add_executable(robot_webots_sim_node
+  src/webots_driver.cpp
+  src/four_wheel_steering_kinematics.cpp
+)
+
+target_include_directories(robot_webots_sim_node PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+target_link_libraries(robot_webots_sim_node 
+  Controller
+)
+
+ament_target_dependencies(robot_webots_sim_node
+  rclcpp
+  geometry_msgs
+  nav_msgs
+  sensor_msgs
+  tf2
+  tf2_ros
+  std_msgs
+)
+
+install(TARGETS robot_webots_sim_node 
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# 安装 launch 文件夹到 ROS 2 搜索路径
+install(
+  DIRECTORY launch param worlds
+  DESTINATION share/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
