@@ -1,0 +1,200 @@
+<?xml version="1.0"?>
+<robot name="/home/CNF2025495045/workspace/nav_for_4WS/src/robot_description/urdf/four_wheel_steering_robot.urdf" xmlns:xacro="http://ros.org/wiki/xacro">
+  <link name="base_footprint"/>
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0.05" rpy="0 0 0"/> 
+  </joint>
+  <link name="base_link">
+  </link>
+  <joint name="steer_rr" type="continuous">
+    <parent link="base_link"/>
+    <child link="solid(4)"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="10" velocity="10"/>
+    <origin xyz="-0.175 -0.175 0" rpy="0 0 0"/>
+  </joint>
+  <link name="solid(4)">
+  </link>
+  <joint name="drive_rr" type="continuous">
+    <parent link="solid(4)"/>
+    <child link="solid"/>
+    <axis xyz="0.000002 -0.000004 1"/>
+    <limit effort="10" velocity="40"/>
+    <origin xyz="0 0 0" rpy="1.570792 0.000002 3.141591"/>
+  </joint>
+  <link name="solid">
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.05" length="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="appearance">
+  </link>
+  <joint name="solid_appearance_joint" type="fixed">
+    <parent link="solid"/>
+    <child link="appearance"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <link name="appearance_0">
+  </link>
+  <joint name="solid_appearance_0_joint" type="fixed">
+    <parent link="solid"/>
+    <child link="appearance_0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <joint name="steer_rl" type="continuous">
+    <parent link="base_link"/>
+    <child link="solid(3)"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="10" velocity="10"/>
+    <origin xyz="-0.175 0.175 0" rpy="0 0 0"/>
+  </joint>
+  <link name="solid(3)">
+  </link>
+  <joint name="drive_rl" type="continuous">
+    <parent link="solid(3)"/>
+    <child link="solid_1"/>
+    <axis xyz="0.000002 -0.000004 1"/>
+    <limit effort="10" velocity="40"/>
+    <origin xyz="0 0 0" rpy="1.570792 0.000002 3.141591"/>
+  </joint>
+  <link name="solid_1">
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.05" length="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="appearance_2">
+  </link>
+  <joint name="solid_1_appearance_2_joint" type="fixed">
+    <parent link="solid_1"/>
+    <child link="appearance_2"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <link name="appearance_3">
+  </link>
+  <joint name="solid_1_appearance_3_joint" type="fixed">
+    <parent link="solid_1"/>
+    <child link="appearance_3"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <joint name="steer_fr" type="continuous">
+    <parent link="base_link"/>
+    <child link="solid(2)"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="10" velocity="10"/>
+    <origin xyz="0.175 -0.175 0" rpy="0 0 0"/>
+  </joint>
+  <link name="solid(2)">
+  </link>
+  <joint name="drive_fr" type="continuous">
+    <parent link="solid(2)"/>
+    <child link="solid_4"/>
+    <axis xyz="0.000002 -0.000004 1"/>
+    <limit effort="10" velocity="40"/>
+    <origin xyz="0 0 0" rpy="1.570792 0.000002 3.141591"/>
+  </joint>
+  <link name="solid_4">
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.05" length="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="appearance_5">
+  </link>
+  <joint name="solid_4_appearance_5_joint" type="fixed">
+    <parent link="solid_4"/>
+    <child link="appearance_5"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <link name="appearance_6">
+  </link>
+  <joint name="solid_4_appearance_6_joint" type="fixed">
+    <parent link="solid_4"/>
+    <child link="appearance_6"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <joint name="steer_fl" type="continuous">
+    <parent link="base_link"/>
+    <child link="solid(1)"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="10" velocity="10"/>
+    <origin xyz="0.175 0.175 0" rpy="0 0 0"/>
+  </joint>
+  <link name="solid(1)">
+  </link>
+  <joint name="drive_fl" type="continuous">
+    <parent link="solid(1)"/>
+    <child link="solid_7"/>
+    <axis xyz="0.000002 -0.000004 1"/>
+    <limit effort="10" velocity="40"/>
+    <origin xyz="0 0 0" rpy="1.570795 -0.999998 3.141589"/>
+  </joint>
+  <link name="solid_7">
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.05" length="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="appearance_8">
+  </link>
+  <joint name="solid_7_appearance_8_joint" type="fixed">
+    <parent link="solid_7"/>
+    <child link="appearance_8"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <link name="appearance_9">
+  </link>
+  <joint name="solid_7_appearance_9_joint" type="fixed">
+    <parent link="solid_7"/>
+    <child link="appearance_9"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <link name="inertial unit">
+  </link>
+  <joint name="base_link_inertial unit_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="inertial unit"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <link name="gps">
+  </link>
+  <joint name="base_link_gps_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="gps"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <link name="pen">
+  </link>
+  <joint name="base_link_pen_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="pen"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+</robot>

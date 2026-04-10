@@ -100,13 +100,14 @@ Robot {
                   }
                 }
               ]
+              name "drive_fl_solid"
               boundingObject USE WHEEL_SHAPE
               physics Physics {
               }
             }
           }
         ]
-        name "solid(1)"
+        name "steer_fl_solid"
         boundingObject Box {
           size 0.1 0.05 0.02
         }
@@ -159,13 +160,14 @@ Robot {
                   }
                 }
               ]
+              name "drive_fr_solid"
               boundingObject USE WHEEL_SHAPE
               physics Physics {
               }
             }
           }
         ]
-        name "solid(2)"
+        name "steer_fr_solid"
         boundingObject Box {
           size 0.1 0.05 0.02
         }
@@ -218,13 +220,14 @@ Robot {
                   }
                 }
               ]
+              name "drive_rl_solid"
               boundingObject USE WHEEL_SHAPE
               physics Physics {
               }
             }
           }
         ]
-        name "solid(3)"
+        name "steer_rl_solid"
         boundingObject Box {
           size 0.1 0.05 0.02
         }
@@ -277,13 +280,14 @@ Robot {
                   }
                 }
               ]
+              name "drive_rr_solid"
               boundingObject USE WHEEL_SHAPE
               physics Physics {
               }
             }
           }
         ]
-        name "solid(4)"
+        name "steer_rr_solid"
         boundingObject Box {
           size 0.1 0.05 0.02
         }
@@ -296,5 +300,5 @@ Robot {
   boundingObject USE body_size
   physics Physics {
   }
-  controller "four_steered_wheeled_robot_controller"
+  controller "<extern>"
 }

@@ -81,15 +81,39 @@ void FourWheelSteeringKinematics::setWheelCommands(std::array<double, 4> target_
 
     bool steering_align_done = isSteerAlign(target_steer);
 
-    RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringKinematics"), 
-        "steering_align_done: %d, target_steer: %.3f, %.3f, %.3f, %.3f, target_drive: %.3f, %.3f, %.3f, %.3f", 
-        steering_align_done,
-        target_steer[0], target_steer[1], target_steer[2], target_steer[3],
-        target_drive[0], target_drive[1], target_drive[2], target_drive[3]
-    );
+    if (0){
+        RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringKinematics"), 
+            "steering_align_done: %d, target_steer: %.3f, %.3f, %.3f, %.3f, target_drive: %.3f, %.3f, %.3f, %.3f", 
+            steering_align_done,
+            target_steer[0], target_steer[1], target_steer[2], target_steer[3],
+            target_drive[0], target_drive[1], target_drive[2], target_drive[3]
+        );
+    }
 
     for (size_t i = 0; i < 4; ++i) {
         wb_motor_set_position(steer_motors_[i], target_steer[i]);
         wb_motor_set_velocity(drive_motors_[i], steering_align_done ? target_drive[i] : 0.0);
     }
+}
+
+void FourWheelSteeringKinematics::initJointState(sensor_msgs::msg::JointState& joint_state_msg_) {
+    joint_state_msg_.header.frame_id = "base_link";
+    for (auto motor : STEER_MOTORS) joint_state_msg_.name.push_back(motor);
+    for (auto drive : DRIVE_MOTORS) joint_state_msg_.name.push_back(drive);
+    joint_state_msg_.position.resize(8, 0.0);
+}
+
+
+void FourWheelSteeringKinematics::updateJointState(sensor_msgs::msg::JointState& joint_state_msg_) {
+    // 转向
+    joint_state_msg_.position[0] = wb_position_sensor_get_value(steer_sensors_[0]);
+    joint_state_msg_.position[1] = wb_position_sensor_get_value(steer_sensors_[1]);
+    joint_state_msg_.position[2] = wb_position_sensor_get_value(steer_sensors_[2]);
+    joint_state_msg_.position[3] = wb_position_sensor_get_value(steer_sensors_[3]);
+
+    // 驱动
+    joint_state_msg_.position[4] = wb_position_sensor_get_value(drive_sensors_[0]);
+    joint_state_msg_.position[5] = wb_position_sensor_get_value(drive_sensors_[1]);
+    joint_state_msg_.position[6] = wb_position_sensor_get_value(drive_sensors_[2]);
+    joint_state_msg_.position[7] = wb_position_sensor_get_value(drive_sensors_[3]);
 }

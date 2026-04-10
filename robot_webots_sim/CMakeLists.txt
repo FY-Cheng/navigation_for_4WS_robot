@@ -14,6 +14,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(rosgraph_msgs REQUIRED)
 
 include_directories(
   /usr/local/webots/include/controller/c
@@ -46,6 +47,7 @@ ament_target_dependencies(robot_webots_sim_node
   tf2
   tf2_ros
   std_msgs
+  rosgraph_msgs
 )
 
 install(TARGETS robot_webots_sim_node 
@@ -54,7 +56,7 @@ install(TARGETS robot_webots_sim_node
 
 # 安装 launch 文件夹到 ROS 2 搜索路径
 install(
-  DIRECTORY launch param worlds
+  DIRECTORY launch param worlds rviz
   DESTINATION share/${PROJECT_NAME}
 )
 

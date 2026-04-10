@@ -9,6 +9,14 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(robot_navigation REQUIRED)
 find_package(robot_webots_sim REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+
+
+install(
+  DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

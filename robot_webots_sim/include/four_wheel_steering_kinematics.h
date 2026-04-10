@@ -20,6 +20,8 @@ class FourWheelSteeringKinematics : public Kinematics {
 public:
     FourWheelSteeringKinematics();
     void setVelocity(double vx, double vy, double omega) override;
+    void initJointState(sensor_msgs::msg::JointState& joint_state_msg_) override;
+    void updateJointState(sensor_msgs::msg::JointState& joint_state_msg_) override;
 
 private:
     // calculate target_steer_angle and targer_drive_angular_vel by input target vx,vy,omega
