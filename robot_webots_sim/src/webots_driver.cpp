@@ -90,6 +90,7 @@ void WebotsDriver::publishOdometryAndJointState() {
     odom.pose.pose.orientation.x = q[0];
     odom.pose.pose.orientation.y = q[1];
     odom.pose.pose.orientation.z = q[2];
+    kinematics_->updateOdometryTwist(odom.twist.twist);
     odom_pub_->publish(odom);
 
     geometry_msgs::msg::TransformStamped tf;
@@ -102,8 +103,8 @@ void WebotsDriver::publishOdometryAndJointState() {
     tf.transform.rotation = odom.pose.pose.orientation;
     tf_broadcaster_->sendTransform(tf);
 
-    kinematics_->updateJointState(joint_state_msg_);
     joint_state_msg_.header.stamp = now;
+    kinematics_->updateJointState(joint_state_msg_);
     joint_state_pub_->publish(joint_state_msg_);
 }
 

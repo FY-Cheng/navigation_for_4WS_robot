@@ -117,3 +117,38 @@ void FourWheelSteeringKinematics::updateJointState(sensor_msgs::msg::JointState&
     joint_state_msg_.position[6] = wb_position_sensor_get_value(drive_sensors_[2]);
     joint_state_msg_.position[7] = wb_position_sensor_get_value(drive_sensors_[3]);
 }
+
+
+void FourWheelSteeringKinematics::forwardKinematics (
+    const std::array<double, 4>& steer,    // 输入：4个轮子的转向角
+    const std::array<double, 4>& drive,    // 输入：4个驱动轮的角速度
+    double& Vx, double& Vy, double& Omega) // 输出：底盘速度
+{
+    const double h = CHASSIS_HALF_WIDTH;
+    const double r = WHEEL_RADIUS;
+
+    // 步骤1：计算每个轮子的速度分量 (vx_i, vy_i)
+    std::array<double, 4> vx, vy;
+    for (int i = 0; i < 4; ++i) {
+        double v_wheel = drive[i] * r;               // 轮子线速度
+        vx[i] = v_wheel * std::cos(steer[i]);        // x方向分量
+        vy[i] = v_wheel * std::sin(steer[i]);        // y方向分量
+    }
+
+    // 步骤2：最小二乘求解底盘速度
+    Vx = (vx[0] + vx[1] + vx[2] + vx[3]) / 4.0;
+    Vy = (vy[0] + vy[1] + vy[2] + vy[3]) / 4.0;
+
+    double term = -vx[0] + vy[0] + vx[1] + vy[1] - vx[2] - vy[2] + vx[3] - vy[3];
+    Omega = term / (8.0 * h);
+}
+
+void FourWheelSteeringKinematics::updateOdometryTwist(geometry_msgs::msg::Twist& twist) {
+    std::array<double, 4> cur_steer_angle, cur_drive_vel;
+    for (size_t i = 0; i < 4; ++i) {
+        cur_steer_angle[i] = wb_position_sensor_get_value(steer_sensors_[i]);
+        cur_drive_vel[i] = wb_motor_get_velocity(drive_motors_[i]);
+    }
+
+    forwardKinematics(cur_steer_angle, cur_drive_vel, twist.linear.x, twist.linear.y, twist.angular.z);
+}

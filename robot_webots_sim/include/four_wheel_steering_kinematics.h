@@ -22,6 +22,7 @@ public:
     void setVelocity(double vx, double vy, double omega) override;
     void initJointState(sensor_msgs::msg::JointState& joint_state_msg_) override;
     void updateJointState(sensor_msgs::msg::JointState& joint_state_msg_) override;
+    void updateOdometryTwist(geometry_msgs::msg::Twist& twist) override;
 
 private:
     // calculate target_steer_angle and targer_drive_angular_vel by input target vx,vy,omega
@@ -30,6 +31,12 @@ private:
     bool isSteerAlign(const std::array<double, 4>& target_steer);
 
     void setWheelCommands(std::array<double, 4> target_steer, std::array<double, 4> target_drive);
+
+    void forwardKinematics (
+        const std::array<double, 4>& steer,    // 输入：4个轮子的转向角
+        const std::array<double, 4>& drive,    // 输入：4个驱动轮的角速度
+        double& Vx, double& Vy, double& Omega  // 输出：底盘速度
+    );
 
     // 你的四舵轮命名
     std::array<std::string, 4> STEER_MOTORS = {

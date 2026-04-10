@@ -27,6 +27,7 @@ public:
     virtual void setVelocity(double vx, double vy, double omega) = 0;
     virtual void initJointState(sensor_msgs::msg::JointState& joint_state_msg_) = 0;
     virtual void updateJointState(sensor_msgs::msg::JointState& joint_state_msg_) = 0;
+    virtual void updateOdometryTwist(geometry_msgs::msg::Twist& twist) = 0;
 private:
 
 };
