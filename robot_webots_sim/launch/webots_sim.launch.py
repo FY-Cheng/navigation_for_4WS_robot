@@ -20,7 +20,7 @@ def generate_launch_description():
     rviz_config = os.path.join(
         get_package_share_directory(package_name),
         'rviz',
-        'rviz.rviz'
+        'webots_rviz.rviz'
     )
 
     webots = ExecuteProcess(

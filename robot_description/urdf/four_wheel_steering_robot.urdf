@@ -43,24 +43,6 @@
     </collision>
   </link>
   
-  <!-- <link name="appearance">
-  </link>
-
-  <joint name="drive_rr_solid_appearance_joint" type="fixed">
-    <parent link="drive_rr_solid"/>
-    <child link="appearance"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-  </joint> -->
-  
-  <!-- <link name="appearance_0">
-  </link>
-  
-  <joint name="drive_rr_solid_appearance_0_joint" type="fixed">
-    <parent link="drive_rr_solid"/>
-    <child link="appearance_0"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-  </joint> -->
-  
   <joint name="steer_rl" type="continuous">
     <parent link="base_link"/>
     <child link="steer_rl_solid"/>
@@ -92,24 +74,6 @@
       </geometry>
     </collision>
   </link>
-
-  <!-- <link name="appearance_1">
-  </link>
-
-  <joint name="drive_rl_solid_appearance_1_joint" type="fixed">
-    <parent link="drive_rl_solid"/>
-    <child link="appearance_1"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-  </joint> -->
-
-  <!-- <link name="appearance_2">
-  </link>
-
-  <joint name="drive_rl_solid_appearance_2_joint" type="fixed">
-    <parent link="drive_rl_solid"/>
-    <child link="appearance_2"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-  </joint> -->
 
   <joint name="steer_fr" type="continuous">
     <parent link="base_link"/>
@@ -143,24 +107,6 @@
     </collision>
   </link>
 
-  <!-- <link name="appearance_3">
-  </link>
-
-  <joint name="drive_fr_solid_appearance_3_joint" type="fixed">
-    <parent link="drive_fr_solid"/>
-    <child link="appearance_3"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-  </joint>
-
-  <link name="appearance_4">
-  </link>
-
-  <joint name="drive_fr_solid_appearance_4_joint" type="fixed">
-    <parent link="drive_fr_solid"/>
-    <child link="appearance_4"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-  </joint> -->
-
   <joint name="steer_fl" type="continuous">
     <parent link="base_link"/>
     <child link="steer_fl_solid"/>
@@ -193,30 +139,12 @@
     </collision>
   </link>
 
-  <!-- <link name="appearance_5">
+  <link name="imu">
   </link>
 
-  <joint name="drive_fl_solid_appearance_5_joint" type="fixed">
-    <parent link="drive_fl_solid"/>
-    <child link="appearance_5"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-  </joint>
-
-  <link name="appearance_6">
-  </link>
-
-  <joint name="drive_fl_solid_appearance_6_joint" type="fixed">
-    <parent link="drive_fl_solid"/>
-    <child link="appearance_6"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-  </joint> -->
-
-  <link name="inertial unit">
-  </link>
-
-  <joint name="base_link_inertial unit_joint" type="fixed">
+  <joint name="base_link_imu_joint" type="fixed">
     <parent link="base_link"/>
-    <child link="inertial unit"/>
+    <child link="imu"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
 
@@ -236,6 +164,22 @@
     <parent link="base_link"/>
     <child link="pen"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="lidar">
+  </link>
+  <joint name="base_link_lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="lidar"/>
+    <origin xyz="0.2 0 0.06" rpy="0 0.523595 0"/>
+  </joint>
+  
+  <link name="tof">
+  </link>
+  <joint name="base_link_tof_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="tof"/>
+    <origin xyz="0.218435 0 0.031895" rpy="0 -0.261795 0"/>
   </joint>
   
 </robot>

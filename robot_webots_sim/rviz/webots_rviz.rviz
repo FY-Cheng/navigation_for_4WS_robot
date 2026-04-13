@@ -6,15 +6,10 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /TF1
-        - /TF1/Tree1
+        - /TF1/Frames1
         - /TF1/Tree1/odom1
         - /TF1/Tree1/odom1/base_footprint1
         - /TF1/Tree1/odom1/base_footprint1/base_link1
-        - /TF1/Tree1/odom1/base_footprint1/base_link1/steer_fl_solid1
-        - /TF1/Tree1/odom1/base_footprint1/base_link1/steer_fr_solid1
-        - /TF1/Tree1/odom1/base_footprint1/base_link1/steer_rl_solid1
-        - /TF1/Tree1/odom1/base_footprint1/base_link1/steer_rr_solid1
       Splitter Ratio: 0.648101270198822
     Tree Height: 1504
   - Class: rviz_common/Selection
@@ -66,7 +61,7 @@ Visualization Manager:
         base_footprint:
           Value: true
         base_link:
-          Value: true
+          Value: false
         drive_fl_solid:
           Value: false
         drive_fr_solid:
@@ -76,13 +71,15 @@ Visualization Manager:
         drive_rr_solid:
           Value: false
         gps:
-          Value: true
-        inertial unit:
-          Value: true
+          Value: false
+        imu:
+          Value: false
+        lidar:
+          Value: false
         odom:
           Value: true
         pen:
-          Value: true
+          Value: false
         steer_fl_solid:
           Value: false
         steer_fr_solid:
@@ -90,6 +87,8 @@ Visualization Manager:
         steer_rl_solid:
           Value: false
         steer_rr_solid:
+          Value: false
+        tof:
           Value: false
       Marker Scale: 1
       Name: TF
@@ -102,7 +101,9 @@ Visualization Manager:
             base_link:
               gps:
                 {}
-              inertial unit:
+              imu:
+                {}
+              lidar:
                 {}
               pen:
                 {}
@@ -118,6 +119,8 @@ Visualization Manager:
               steer_rr_solid:
                 drive_rr_solid:
                   {}
+              tof:
+                {}
       Update Interval: 0
       Value: true
   Enabled: true
@@ -166,7 +169,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 2.129415512084961
+      Distance: 1.7892403602600098
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -181,10 +184,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.4003974199295044
+      Pitch: 0.5103984475135803
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.73039710521698
+      Yaw: 2.275408983230591
     Saved: ~
 Window Geometry:
   Displays:

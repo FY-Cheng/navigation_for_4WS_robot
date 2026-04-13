@@ -10,7 +10,7 @@ WebotsDriver::WebotsDriver() : Node("webots_driver") {
     RCLCPP_INFO(this->get_logger(), "Webots extern 控制器已连接");
 
     // 初始化传感器
-    imu_ = wb_robot_get_device("inertial unit");
+    imu_ = wb_robot_get_device("imu");
     gps_ = wb_robot_get_device("gps");
     wb_inertial_unit_enable(imu_, TIME_STEP);
     wb_gps_enable(gps_, TIME_STEP);
