@@ -8,8 +8,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.03604354935557313 -0.9408869773851511 -0.3367975034599969 6.056596152520472
-  position -1.3584737328237668 -0.1793549396349029 0.47311115489790356
+  orientation 0.029258584084532507 -0.9311992932411151 -0.3633342972038509 6.1105624804690555
+  position -30.646344954832557 -3.162647753596833 12.108203771181717
 }
 TexturedBackground {
 }
@@ -17,6 +17,8 @@ TexturedBackgroundLight {
 }
 RectangleArena {
   floorSize 10 10
+  floorTileSize 1 1
+  wallHeight 1
 }
 Robot {
   translation -0.0925239921030885 -0.032354219771321774 0.04706053828651605
@@ -56,11 +58,10 @@ Robot {
       width 248
       height 180
       minRange 0.03
-      maxRange 2
+      maxRange 4
     }
     Lidar {
       translation 0.2 0 0.06
-      rotation 0 -1 0 -0.523595307179586
       children [
         Shape {
           appearance Appearance {
@@ -74,10 +75,9 @@ Robot {
           }
         }
       ]
-      tiltAngle 0.7854
       fieldOfView 6.28319
-      verticalFieldOfView 1.4
-      numberOfLayers 16
+      verticalFieldOfView 1.2
+      numberOfLayers 32
       near 0.1
       minRange 0.1
       maxRange 5
@@ -153,8 +153,6 @@ Robot {
               boundingObject USE WHEEL_SHAPE
               physics Physics {
               }
-              linearVelocity -2.719622354555704e-08 2.1782700328363864e-07 5.2005236656814365e-06
-              angularVelocity -4.2178032472285855e-06 -5.2561801258069e-07 -1.2476780890227555e-09
             }
           }
         ]
@@ -164,8 +162,6 @@ Robot {
         }
         physics Physics {
         }
-        linearVelocity -2.670097724971815e-08 2.1402651614167114e-07 4.802507842889706e-06
-        angularVelocity -4.2171811823834135e-06 -5.253441646946593e-07 -1.2506341405696318e-09
       }
     }
     DEF steer_fr_wheel HingeJoint {
@@ -219,8 +215,6 @@ Robot {
               boundingObject USE WHEEL_SHAPE
               physics Physics {
               }
-              linearVelocity -2.7810010872873503e-08 2.224386791333423e-07 4.830467061075976e-06
-              angularVelocity -4.21809680719345e-06 -5.257946211728344e-07 -2.1272277800039406e-09
             }
           }
         ]
@@ -230,8 +224,6 @@ Robot {
         }
         physics Physics {
         }
-        linearVelocity -2.7017266772433947e-08 2.163471638390388e-07 4.432621445396155e-06
-        angularVelocity -4.217066483186741e-06 -5.253296704302843e-07 -2.131308966423251e-09
       }
     }
     DEF steer_rl_wheel HingeJoint {
@@ -285,8 +277,6 @@ Robot {
               boundingObject USE WHEEL_SHAPE
               physics Physics {
               }
-              linearVelocity -2.4732381758637633e-08 1.9935842833004712e-07 6.644481470597191e-06
-              angularVelocity -4.2166332358656185e-06 -5.249126253114239e-07 -2.299305275066117e-09
             }
           }
         ]
@@ -296,8 +286,6 @@ Robot {
         }
         physics Physics {
         }
-        linearVelocity -2.5447913743374993e-08 2.048586019297322e-07 6.244857948552088e-06
-        angularVelocity -4.2176460936920305e-06 -5.254050136669433e-07 -2.303573084260613e-09
       }
     }
     DEF steer_rr_wheel HingeJoint {
@@ -351,8 +339,6 @@ Robot {
               boundingObject USE WHEEL_SHAPE
               physics Physics {
               }
-              linearVelocity -2.534730897543982e-08 2.0396965835749766e-07 6.274424869176082e-06
-              angularVelocity -4.216927032199022e-06 -5.2508870150087e-07 -1.381853684461749e-09
             }
           }
         ]
@@ -362,8 +348,6 @@ Robot {
         }
         physics Physics {
         }
-        linearVelocity -2.5764773040347594e-08 2.0717902697595427e-07 5.874971537415521e-06
-        angularVelocity -4.217531525579664e-06 -5.253902324553774e-07 -1.3848500190780438e-09
       }
     }
   ]
@@ -372,6 +356,41 @@ Robot {
   physics Physics {
   }
   controller "<extern>"
-  linearVelocity -2.6195185703384008e-08 2.1031637940926098e-07 4.952384085481824e-06
-  angularVelocity -4.217366555028615e-06 -5.253883576962287e-07 1.7478615867905326e-10
+}
+Solid {
+  translation -0.22205 1.09097 0.05
+  rotation 0 0 1 0.785398
+  children [
+    Shape {
+      appearance Appearance {
+      }
+      geometry Box {
+        size 0.1 0.3 0.1
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.1 0.3 0.1
+  }
+  physics Physics {
+  }
+}
+Solid {
+  translation -0.625847 1.49477 0.165909
+  rotation 0.8267650167523263 0.3424570069390352 0.44629900904313374 1.49626
+  children [
+    Shape {
+      appearance Appearance {
+      }
+      geometry Box {
+        size 0.1 0.3 0.1
+      }
+    }
+  ]
+  name "solid(1)"
+  boundingObject Box {
+    size 0.1 0.3 0.1
+  }
+  physics Physics {
+  }
 }

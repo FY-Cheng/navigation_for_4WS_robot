@@ -12,8 +12,13 @@ WebotsDriver::WebotsDriver() : Node("webots_driver") {
     // 初始化传感器
     imu_ = wb_robot_get_device("imu");
     gps_ = wb_robot_get_device("gps");
+    lidar_3d_ = wb_robot_get_device("lidar");
+    tof_ = wb_robot_get_device("tof");
     wb_inertial_unit_enable(imu_, TIME_STEP);
     wb_gps_enable(gps_, TIME_STEP);
+    wb_lidar_enable(lidar_3d_, TIME_STEP);
+    wb_range_finder_enable(tof_, TIME_STEP);
+    wb_lidar_enable_point_cloud(lidar_3d_);
 
     // ==============================
     // 运动学解耦：这里替换成你的底盘
@@ -24,6 +29,9 @@ WebotsDriver::WebotsDriver() : Node("webots_driver") {
     // ROS 发布者
     odom_pub_ = this->create_publisher<nav_msgs::msg::Odometry>("/odom", 10);
     imu_pub_ = this->create_publisher<sensor_msgs::msg::Imu>("/imu", 10);
+    lidar_3d_pub_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("/lidar/point_cloud", 10);
+    tof_image_pub_ = this->create_publisher<sensor_msgs::msg::Image>("/tof/depth/image_raw", 10);
+    tof_camera_info_pub_ = this->create_publisher<sensor_msgs::msg::CameraInfo>("/tof/depth/camera_info", 10);
     joint_state_pub_ = this->create_publisher<sensor_msgs::msg::JointState>("/joint_states", 10);
     clock_pub_ = this->create_publisher<rosgraph_msgs::msg::Clock>("/clock", 10);
 
@@ -62,7 +70,7 @@ void WebotsDriver::updateLoop() {
 
 void WebotsDriver::publishIMU() {
     sensor_msgs::msg::Imu imu_msg;
-    imu_msg.header.frame_id = "imu_link";
+    imu_msg.header.frame_id = "imu";
     imu_msg.header.stamp = this->now();
 
     const double* q = wb_inertial_unit_get_quaternion(imu_);
@@ -72,6 +80,113 @@ void WebotsDriver::publishIMU() {
     imu_msg.orientation.z = q[2];
 
     imu_pub_->publish(imu_msg);
+}
+
+void WebotsDriver::publishTof() {
+    rclcpp::Time now = this->now();
+    const float* wb = wb_range_finder_get_range_image(tof_);
+    int w = wb_range_finder_get_width(tof_);
+    int h = wb_range_finder_get_height(tof_);
+
+    if (!wb || w <=0 || h <=0) return;
+
+    sensor_msgs::msg::Image img;
+    img.header.stamp = now;
+    img.header.frame_id = "tof_optical";   
+    img.width = w;
+    img.height = h;
+    img.encoding = "32FC1";
+    img.step = w * 4;
+    img.data.resize(img.step * h);
+
+    memcpy(img.data.data(), wb, img.data.size());
+
+    tof_image_pub_->publish(img);
+
+    // 相机内参完全不变
+    sensor_msgs::msg::CameraInfo info;
+    info.header = img.header;
+    info.width = w;
+    info.height = h;
+    info.distortion_model = "plumb_bob";
+    info.d.resize(5, 0.0);
+
+    double fov = 1.7104;
+    double fx = (w / 2.0) / tan(fov / 2.0);
+    double fy = fx;
+    double cx = w / 2.0;
+    double cy = h / 2.0;
+
+    info.k = {fx, 0, cx, 0, fy, cy, 0, 0, 1};
+    info.p = {fx, 0, cx, 0, 0, fy, cy, 0, 0, 0, 1, 0};
+
+    tof_camera_info_pub_->publish(info);
+}
+
+// 纯转换：Webots 3D激光雷达点云 → ROS2标准PointCloud2，无多余操作，无编译错误
+void WebotsDriver::publish3DPoints() {
+    rclcpp::Time now = this->now();
+    // 获取Webots原生点云
+    const WbLidarPoint* webots_points = wb_lidar_get_point_cloud(lidar_3d_);
+    int total_points = wb_lidar_get_number_of_points(lidar_3d_);
+
+    // 仅空值检查（唯一必要判断）
+    if (!webots_points || total_points <= 0) {
+        return;
+    }
+
+    // 初始化ROS2标准PointCloud2
+    sensor_msgs::msg::PointCloud2 cloud;
+    cloud.header.stamp = now;
+    cloud.header.frame_id = "lidar_optical";  // 标准坐标系
+
+    // 激光雷达无序点云
+    cloud.height = 1;
+    cloud.width = total_points;
+    cloud.is_bigendian = false;
+    cloud.is_dense = false;
+
+    // 仅 xyz 3个float32 → 12字节/点
+    cloud.point_step = 12;
+    cloud.row_step = cloud.point_step * cloud.width;
+    cloud.data.resize(cloud.row_step);
+
+    // 定义标准xyz字段（Webots仅支持这三个）
+    cloud.fields.resize(3);
+    // X
+    cloud.fields[0].name = "x";
+    cloud.fields[0].offset = 0;
+    cloud.fields[0].datatype = sensor_msgs::msg::PointField::FLOAT32;
+    cloud.fields[0].count = 1;
+    // Y
+    cloud.fields[1].name = "y";
+    cloud.fields[1].offset = 4;
+    cloud.fields[1].datatype = sensor_msgs::msg::PointField::FLOAT32;
+    cloud.fields[1].count = 1;
+    // Z
+    cloud.fields[2].name = "z";
+    cloud.fields[2].offset = 8;
+    cloud.fields[2].datatype = sensor_msgs::msg::PointField::FLOAT32;
+    cloud.fields[2].count = 1;
+
+    // 直接填充数据（纯复制，无修改、无过滤、无旋转）
+    sensor_msgs::PointCloud2Iterator<float> iter_x(cloud, "x");
+    sensor_msgs::PointCloud2Iterator<float> iter_y(cloud, "y");
+    sensor_msgs::PointCloud2Iterator<float> iter_z(cloud, "z");
+
+    for (int i = 0; i < total_points; ++i) {
+        const auto& p = webots_points[i];
+        *iter_x = static_cast<float>(p.x);
+        *iter_y = static_cast<float>(p.y);
+        *iter_z = static_cast<float>(p.z);
+
+        ++iter_x;
+        ++iter_y;
+        ++iter_z;
+    }
+
+    // 发布ROS2标准点云
+    lidar_3d_pub_->publish(cloud);
 }
 
 void WebotsDriver::publishOdometryAndJointState() {
@@ -124,6 +239,8 @@ void WebotsDriver::run() {
         publishClock();
         // 2. 发布传感器+里程计+TF
         publishIMU();
+        publish3DPoints();
+        publishTof();
         publishOdometryAndJointState();
         // 3. 非阻塞处理ROS2回调（cmd_vel）
         rclcpp::spin_some(this->shared_from_this());

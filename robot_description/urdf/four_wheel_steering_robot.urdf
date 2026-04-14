@@ -171,7 +171,16 @@
   <joint name="base_link_lidar_joint" type="fixed">
     <parent link="base_link"/>
     <child link="lidar"/>
-    <origin xyz="0.2 0 0.06" rpy="0 0.523595 0"/>
+    <origin xyz="0.2 0 0.06" rpy="0 0 0"/>
+  </joint>
+
+  <link name="lidar_optical">
+  </link>
+  <joint name="lidar_to_optical_joint" type="fixed">
+    <parent link="lidar"/>  <!-- 你原有雷达的link名 -->
+    <child link="lidar_optical"/>
+    <origin xyz="0 0 0" 
+            rpy="0 0 0"/>
   </joint>
   
   <link name="tof">
@@ -180,6 +189,15 @@
     <parent link="base_link"/>
     <child link="tof"/>
     <origin xyz="0.218435 0 0.031895" rpy="0 -0.261795 0"/>
+  </joint>
+
+  <link name="tof_optical">
+  </link>
+  <joint name="tof_to_optical_joint" type="fixed">
+    <parent link="tof"/>
+    <child link="tof_optical"/>
+    <origin xyz="0 0 0" 
+            rpy="1.570796 3.141592 1.570796"/>
   </joint>
   
 </robot>
