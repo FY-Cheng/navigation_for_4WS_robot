@@ -6,6 +6,8 @@ Panels:
       Expanded:
         - /TF1/Frames1
         - /DepthCloud1/Auto Size1
+        - /PointCloud21
+        - /PointCloud21/Topic1
       Splitter Ratio: 0.648101270198822
     Tree Height: 1504
   - Class: rviz_common/Selection
@@ -25,7 +27,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: DepthCloud
+    SyncSource: PointCloud2
 Visualization Manager:
   Class: ""
   Displays:
@@ -168,14 +170,14 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
+        Max Value: 1.4516291618347168
+        Min Value: -0.04364963620901108
         Value: true
       Axis: Z
       Channel Name: intensity
       Class: rviz_default_plugins/PointCloud2
       Color: 255; 255; 255
-      Color Transformer: Intensity
+      Color Transformer: AxisColor
       Decay Time: 0
       Enabled: true
       Invert Rainbow: false
@@ -188,9 +190,9 @@ Visualization Manager:
       Selectable: true
       Size (Pixels): 3
       Size (m): 0.009999999776482582
-      Style: Flat Squares
+      Style: Points
       Topic:
-        Depth: 5
+        Depth: 3
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
@@ -244,7 +246,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 4.301936149597168
+      Distance: 15.106612205505371
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -259,10 +261,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: -0.2702023983001709
+      Pitch: 0.4797977805137634
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.638473987579346
+      Yaw: 4.736523628234863
     Saved: ~
 Window Geometry:
   Displays:

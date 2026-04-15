@@ -11,10 +11,14 @@ WebotsDriver::WebotsDriver() : Node("webots_driver") {
 
     // 初始化传感器
     imu_ = wb_robot_get_device("imu");
+    gyro_ = wb_robot_get_device("gyro");
+    accelerometer_ = wb_robot_get_device("accelerometer");
     gps_ = wb_robot_get_device("gps");
     lidar_3d_ = wb_robot_get_device("lidar");
     tof_ = wb_robot_get_device("tof");
     wb_inertial_unit_enable(imu_, TIME_STEP);
+    wb_gyro_enable(gyro_, TIME_STEP);
+    wb_accelerometer_enable(accelerometer_, TIME_STEP);
     wb_gps_enable(gps_, TIME_STEP);
     wb_lidar_enable(lidar_3d_, TIME_STEP);
     wb_range_finder_enable(tof_, TIME_STEP);
@@ -79,6 +83,23 @@ void WebotsDriver::publishIMU() {
     imu_msg.orientation.y = q[1];
     imu_msg.orientation.z = q[2];
 
+    const double* angular_vel = wb_gyro_get_values(gyro_);
+    imu_msg.angular_velocity.x = angular_vel[0];
+    imu_msg.angular_velocity.y = angular_vel[1];
+    imu_msg.angular_velocity.z = angular_vel[2];
+
+    const double* linear_acc = wb_accelerometer_get_values(accelerometer_);
+    imu_msg.linear_acceleration.x = linear_acc[0];
+    imu_msg.linear_acceleration.y = linear_acc[1];
+    imu_msg.linear_acceleration.z = linear_acc[2];
+
+    // 姿态协方差
+    std::fill(imu_msg.orientation_covariance.begin(), imu_msg.orientation_covariance.end(), 0.01);
+    // 陀螺仪协方差
+    std::fill(imu_msg.angular_velocity_covariance.begin(), imu_msg.angular_velocity_covariance.end(), 0.01);
+    // 加速度计协方差
+    std::fill(imu_msg.linear_acceleration_covariance.begin(), imu_msg.linear_acceleration_covariance.end(), 0.01);
+
     imu_pub_->publish(imu_msg);
 }
 
@@ -138,7 +159,7 @@ void WebotsDriver::publish3DPoints() {
     // 初始化ROS2标准PointCloud2
     sensor_msgs::msg::PointCloud2 cloud;
     cloud.header.stamp = now;
-    cloud.header.frame_id = "lidar_optical";  // 标准坐标系
+    cloud.header.frame_id = "lidar";  // 标准坐标系
 
     // 激光雷达无序点云
     cloud.height = 1;
@@ -146,13 +167,12 @@ void WebotsDriver::publish3DPoints() {
     cloud.is_bigendian = false;
     cloud.is_dense = false;
 
-    // 仅 xyz 3个float32 → 12字节/点
-    cloud.point_step = 12;
+    cloud.point_step = 16;
     cloud.row_step = cloud.point_step * cloud.width;
     cloud.data.resize(cloud.row_step);
 
     // 定义标准xyz字段（Webots仅支持这三个）
-    cloud.fields.resize(3);
+    cloud.fields.resize(4);
     // X
     cloud.fields[0].name = "x";
     cloud.fields[0].offset = 0;
@@ -169,20 +189,29 @@ void WebotsDriver::publish3DPoints() {
     cloud.fields[2].datatype = sensor_msgs::msg::PointField::FLOAT32;
     cloud.fields[2].count = 1;
 
+    cloud.fields[3].name = "intensity";
+    cloud.fields[3].offset = 12;
+    cloud.fields[3].datatype = sensor_msgs::msg::PointField::FLOAT32;
+    cloud.fields[3].count = 1;
+
     // 直接填充数据（纯复制，无修改、无过滤、无旋转）
     sensor_msgs::PointCloud2Iterator<float> iter_x(cloud, "x");
     sensor_msgs::PointCloud2Iterator<float> iter_y(cloud, "y");
     sensor_msgs::PointCloud2Iterator<float> iter_z(cloud, "z");
+        sensor_msgs::PointCloud2Iterator<float> iter_intensity(cloud, "intensity");
+
 
     for (int i = 0; i < total_points; ++i) {
         const auto& p = webots_points[i];
         *iter_x = static_cast<float>(p.x);
         *iter_y = static_cast<float>(p.y);
         *iter_z = static_cast<float>(p.z);
+        *iter_intensity = 100.0f;  // 固定合理强度值
 
         ++iter_x;
         ++iter_y;
         ++iter_z;
+        ++iter_intensity;
     }
 
     // 发布ROS2标准点云

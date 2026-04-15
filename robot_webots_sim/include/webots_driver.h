@@ -17,6 +17,8 @@
 
 #include <webots/robot.h>
 #include <webots/inertial_unit.h>
+#include <webots/gyro.h>
+#include <webots/accelerometer.h>
 #include <webots/gps.h>
 #include <webots/range_finder.h>
 #include <webots/lidar.h>
@@ -60,6 +62,8 @@ private:
 
     // Webots 设备
     WbDeviceTag imu_{};
+    WbDeviceTag gyro_{};
+    WbDeviceTag accelerometer_{};
     WbDeviceTag gps_{};
     WbDeviceTag lidar_3d_ {};
     WbDeviceTag tof_ {};

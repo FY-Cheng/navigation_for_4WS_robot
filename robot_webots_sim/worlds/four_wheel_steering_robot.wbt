@@ -8,8 +8,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.029258584084532507 -0.9311992932411151 -0.3633342972038509 6.1105624804690555
-  position -30.646344954832557 -3.162647753596833 12.108203771181717
+  orientation 0.25788281646419015 0.786121944833541 -0.5617016475172811 1.0571604180866438
+  position -1.476115023084115 0.7358908052881992 2.140677584654427
 }
 TexturedBackground {
 }
@@ -61,7 +61,7 @@ Robot {
       maxRange 4
     }
     Lidar {
-      translation 0.2 0 0.06
+      translation 0 0 0.06
       children [
         Shape {
           appearance Appearance {
@@ -76,11 +76,11 @@ Robot {
         }
       ]
       fieldOfView 6.28319
-      verticalFieldOfView 1.2
+      verticalFieldOfView 0.4
       numberOfLayers 32
-      near 0.1
-      minRange 0.1
-      maxRange 5
+      near 0.37
+      minRange 0.37
+      maxRange 30
     }
     Pen {
     }
@@ -88,6 +88,10 @@ Robot {
     }
     InertialUnit {
       name "imu"
+    }
+    Gyro {
+    }
+    Accelerometer {
     }
     Pose {
       children [
