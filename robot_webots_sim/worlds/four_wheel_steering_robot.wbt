@@ -8,15 +8,15 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.25788281646419015 0.786121944833541 -0.5617016475172811 1.0571604180866438
-  position -1.476115023084115 0.7358908052881992 2.140677584654427
+  orientation -0.159454275784028 -0.056914909316385785 0.9855633044263056 3.8181344545381624
+  position 25.88669629305776 27.242445673415734 19.35695522112364
 }
 TexturedBackground {
 }
 TexturedBackgroundLight {
 }
 RectangleArena {
-  floorSize 10 10
+  floorSize 20 10
   floorTileSize 1 1
   wallHeight 1
 }
@@ -362,39 +362,208 @@ Robot {
   controller "<extern>"
 }
 Solid {
-  translation -0.22205 1.09097 0.05
-  rotation 0 0 1 0.785398
+  translation 0 3.34 0.86
   children [
-    Shape {
+    DEF RACK_A Shape {
       appearance Appearance {
+        material Material {
+          diffuseColor 0.207843 0.517647 0.894118
+        }
       }
       geometry Box {
-        size 0.1 0.3 0.1
+        size 3 0.5 1.8
       }
     }
   ]
-  boundingObject Box {
-    size 0.1 0.3 0.1
-  }
-  physics Physics {
-  }
+  name "solid(2)"
+  boundingObject USE RACK_A
 }
 Solid {
-  translation -0.625847 1.49477 0.165909
-  rotation 0.8267650167523263 0.3424570069390352 0.44629900904313374 1.49626
+  translation 0 1.98 0.86
   children [
-    Shape {
+    DEF RACK_A Shape {
       appearance Appearance {
+        material Material {
+          diffuseColor 0.207843 0.517647 0.894118
+        }
       }
       geometry Box {
-        size 0.1 0.3 0.1
+        size 3 0.5 1.8
       }
     }
   ]
   name "solid(1)"
-  boundingObject Box {
-    size 0.1 0.3 0.1
-  }
-  physics Physics {
-  }
+  boundingObject USE RACK_A
+}
+Solid {
+  translation -3.91 3.34 0.86
+  children [
+    DEF RACK_A Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.207843 0.517647 0.894118
+        }
+      }
+      geometry Box {
+        size 3 0.5 1.8
+      }
+    }
+  ]
+  name "solid(3)"
+  boundingObject USE RACK_A
+}
+Solid {
+  translation -3.91 2 0.86
+  children [
+    DEF RACK_A Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.207843 0.517647 0.894118
+        }
+      }
+      geometry Box {
+        size 3 0.5 1.8
+      }
+    }
+  ]
+  name "solid(4)"
+  boundingObject USE RACK_A
+}
+Solid {
+  translation -9.69 1.84 0.86
+  rotation 0 0 1 -1.5707953071795862
+  children [
+    DEF RACK_A Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.207843 0.517647 0.894118
+        }
+      }
+      geometry Box {
+        size 3 0.5 1.8
+      }
+    }
+  ]
+  name "solid(9)"
+  boundingObject USE RACK_A
+}
+Solid {
+  translation -9.69 -2.45 0.86
+  rotation 0 0 1 -1.5707953071795862
+  children [
+    DEF RACK_A Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.207843 0.517647 0.894118
+        }
+      }
+      geometry Box {
+        size 3 0.5 1.8
+      }
+    }
+  ]
+  name "solid(10)"
+  boundingObject USE RACK_A
+}
+Solid {
+  translation -0.53 -3.66 0.86
+  children [
+    DEF RACK_A Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.207843 0.517647 0.894118
+        }
+      }
+      geometry Box {
+        size 3 0.5 1.8
+      }
+    }
+  ]
+  name "solid(8)"
+  boundingObject USE RACK_A
+}
+Solid {
+  translation -3.55 -3.66 0.86
+  children [
+    DEF RACK_A Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.207843 0.517647 0.894118
+        }
+      }
+      geometry Box {
+        size 3 0.5 1.8
+      }
+    }
+  ]
+  name "solid(5)"
+  boundingObject USE RACK_A
+}
+Solid {
+  translation -3.55 -2.12 0.86
+  children [
+    DEF RACK_A Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.207843 0.517647 0.894118
+        }
+      }
+      geometry Box {
+        size 3 0.5 1.8
+      }
+    }
+  ]
+  name "solid(11)"
+  boundingObject USE RACK_A
+}
+Solid {
+  translation -0.53 -3.66 0.86
+  children [
+    DEF RACK_A Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.207843 0.517647 0.894118
+        }
+      }
+      geometry Box {
+        size 3 0.5 1.8
+      }
+    }
+  ]
+  name "solid(6)"
+  boundingObject USE RACK_A
+}
+Solid {
+  translation 2.48 -3.66 0.86
+  children [
+    DEF RACK_A Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.207843 0.517647 0.894118
+        }
+      }
+      geometry Box {
+        size 3 0.5 1.8
+      }
+    }
+  ]
+  name "solid(7)"
+  boundingObject USE RACK_A
+}
+Solid {
+  translation 2.48 -2.19 0.86
+  children [
+    DEF RACK_A Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.207843 0.517647 0.894118
+        }
+      }
+      geometry Box {
+        size 3 0.5 1.8
+      }
+    }
+  ]
+  name "solid(12)"
+  boundingObject USE RACK_A
 }
