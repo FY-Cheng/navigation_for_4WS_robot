@@ -8,8 +8,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.159454275784028 -0.056914909316385785 0.9855633044263056 3.8181344545381624
-  position 25.88669629305776 27.242445673415734 19.35695522112364
+  orientation 0.0013561517234511383 0.9999982518697207 -0.0012872878488547567 1.6208008965413632
+  position 1.2883342049709547 -0.19157528801473658 26.131176919455847
 }
 TexturedBackground {
 }
@@ -22,7 +22,6 @@ RectangleArena {
 }
 Robot {
   translation -0.0925239921030885 -0.032354219771321774 0.04706053828651605
-  rotation 1.9538167733656242e-07 -2.7080750440123853e-07 0.9999999999999443 1.9459297221838023
   children [
     RangeFinder {
       translation 0.218435 0 0.0318947
@@ -463,23 +462,6 @@ Solid {
     }
   ]
   name "solid(10)"
-  boundingObject USE RACK_A
-}
-Solid {
-  translation -0.53 -3.66 0.86
-  children [
-    DEF RACK_A Shape {
-      appearance Appearance {
-        material Material {
-          diffuseColor 0.207843 0.517647 0.894118
-        }
-      }
-      geometry Box {
-        size 3 0.5 1.8
-      }
-    }
-  ]
-  name "solid(8)"
   boundingObject USE RACK_A
 }
 Solid {

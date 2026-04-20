@@ -46,12 +46,6 @@ WebotsDriver::WebotsDriver() : Node("webots_driver") {
     );
 
     tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(this);
-
-    // 主循环
-    timer_ = this->create_wall_timer(
-        std::chrono::milliseconds(TIME_STEP),
-        std::bind(&WebotsDriver::updateLoop, this)
-    );
 }
 
 WebotsDriver::~WebotsDriver() {
@@ -62,20 +56,18 @@ void WebotsDriver::cmdVelCallback(const geometry_msgs::msg::Twist::SharedPtr msg
     kinematics_->setVelocity(msg->linear.x, msg->linear.y, msg->angular.z);
 }
 
-void WebotsDriver::updateLoop() {
-    if (wb_robot_step(TIME_STEP) == -1) {
-        rclcpp::shutdown();
-        return;
-    }
-    
-    publishIMU();
-    publishOdometryAndJointState();
+rclcpp::Time WebotsDriver::getNow() {
+    double webots_time = wb_robot_get_time();
+    int32_t sec = static_cast<int32_t>(webots_time);
+    uint32_t nsec = static_cast<uint32_t>((webots_time - sec) * 1e9);
+    return rclcpp::Time(sec, nsec, RCL_ROS_TIME);
 }
 
 void WebotsDriver::publishIMU() {
+    rclcpp::Time now = getNow();;
     sensor_msgs::msg::Imu imu_msg;
     imu_msg.header.frame_id = "imu";
-    imu_msg.header.stamp = this->now();
+    imu_msg.header.stamp = now;
 
     const double* q = wb_inertial_unit_get_quaternion(imu_);
     imu_msg.orientation.w = q[3];
@@ -104,7 +96,7 @@ void WebotsDriver::publishIMU() {
 }
 
 void WebotsDriver::publishTof() {
-    rclcpp::Time now = this->now();
+    rclcpp::Time now = getNow();;
     const float* wb = wb_range_finder_get_range_image(tof_);
     int w = wb_range_finder_get_width(tof_);
     int h = wb_range_finder_get_height(tof_);
@@ -146,7 +138,7 @@ void WebotsDriver::publishTof() {
 
 // 纯转换：Webots 3D激光雷达点云 → ROS2标准PointCloud2，无多余操作，无编译错误
 void WebotsDriver::publish3DPoints() {
-    rclcpp::Time now = this->now();
+    rclcpp::Time now = getNow();;
     // 获取Webots原生点云
     const WbLidarPoint* webots_points = wb_lidar_get_point_cloud(lidar_3d_);
     int total_points = wb_lidar_get_number_of_points(lidar_3d_);
@@ -219,8 +211,7 @@ void WebotsDriver::publish3DPoints() {
 }
 
 void WebotsDriver::publishOdometryAndJointState() {
-    rclcpp::Time now = this->now();
-
+    rclcpp::Time now = getNow();;
     nav_msgs::msg::Odometry odom;
     odom.header.frame_id = "odom";
     odom.child_frame_id = "base_footprint";

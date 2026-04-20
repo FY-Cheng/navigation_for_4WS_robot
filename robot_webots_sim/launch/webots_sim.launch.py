@@ -55,13 +55,14 @@ def generate_launch_description():
     delay_driver = RegisterEventHandler(
         event_handler=OnProcessStart(
             target_action=webots,
-            on_start=[robot_driver_node, rviz_node]
+            on_start=[robot_driver_node]
         )
     )
 
     # 返回启动描述
     return LaunchDescription([
-        declare_use_rviz,
         webots,
-        delay_driver
+        delay_driver, 
+        declare_use_rviz,
+        rviz_node
     ])

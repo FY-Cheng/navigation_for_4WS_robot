@@ -28,7 +28,7 @@
 #include <vector>
 
 
-static constexpr int TIME_STEP = 32;
+static constexpr int TIME_STEP = 32; // 仿真步长 (毫秒)，必须是 WorldInfo.basicTimeStep 的整数倍
 
 // 运动学接口
 class Kinematics {
@@ -56,7 +56,7 @@ public:
 
 protected:
     void cmdVelCallback(const geometry_msgs::msg::Twist::SharedPtr msg);
-    void updateLoop();
+    rclcpp::Time getNow();
 
 private:
 
@@ -81,6 +81,5 @@ private:
     rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr clock_pub_;
     rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
     std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
-    rclcpp::TimerBase::SharedPtr timer_;
     sensor_msgs::msg::JointState joint_state_msg_;
 };
