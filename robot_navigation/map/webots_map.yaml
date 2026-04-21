@@ -1,4 +1,4 @@
-image: 2d_map.pgm
+image: webots_map.pgm
 mode: trinary
 resolution: 0.050
 origin: [-15.670, -9.973, 0]

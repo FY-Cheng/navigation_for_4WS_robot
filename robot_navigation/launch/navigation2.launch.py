@@ -6,7 +6,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 
 
@@ -16,23 +16,21 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     use_sim_time_arg = DeclareLaunchArgument(
         "use_sim_time",
-        default_value="false",
+        default_value="true",
         description="Use simulation (Webots) clock if true"
     )
 
-    map = LaunchConfiguration("map")
-    map_file = os.path.join(get_package_share_directory(nav_package), "map", "map.yaml")
+    map_file = LaunchConfiguration("map_file")
     map_arg = DeclareLaunchArgument(
-        "map",
-        default_value=map_file,
+        "map_file",
+        default_value="webots_map.yaml",
         description="Full path to map file to load"
     )
 
     params_file = LaunchConfiguration("params_file")
-    param = os.path.join(get_package_share_directory(nav_package), "param", "params.yaml")
     params_arg = DeclareLaunchArgument(
         "params_file",
-        default_value=param,
+        default_value="webots_params.yaml",
         description="Full path to nav2 parameters file"
     )
 
@@ -41,9 +39,10 @@ def generate_launch_description():
     nav2_bringup = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([nav2_bringup_dir, '/bringup_launch.py']),
         launch_arguments={
-            'map': map,
             'use_sim_time': use_sim_time,
-            'params_file': params_file
+            'map': PathJoinSubstitution([get_package_share_directory(nav_package), "map", map_file]),
+            'params_file': PathJoinSubstitution([get_package_share_directory(nav_package), "param", params_file]),
+            'use_amcl': 'false',
         }.items()
     )
 

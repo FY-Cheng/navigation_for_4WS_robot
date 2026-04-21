@@ -36,10 +36,10 @@ def generate_launch_description():
         }.items()
     )
 
-    use_mapping = LaunchConfiguration('use_mapping', default='true')
+    use_mapping = LaunchConfiguration('use_mapping')
     use_mapping_cmd = DeclareLaunchArgument(
         'use_mapping',
-        default_value='true',
+        default_value='false',
         description='Use mapping or localization'
     )
 
@@ -74,13 +74,38 @@ def generate_launch_description():
     )
 
 
+    use_navigation = LaunchConfiguration('use_navigation')
+    use_navigation_cmd = DeclareLaunchArgument(
+        'use_navigation',
+        default_value='false',
+        description='Use navigation'
+    )
+
+    navigation_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory('robot_navigation'),
+                'launch',
+                'navigation2.launch.py'
+            )
+        ),
+        condition = IfCondition(use_navigation),
+        launch_arguments={
+            'use_sim_time': 'true',
+            'params_file': 'webots_params.yaml'
+        }.items()
+    )
+
+
     return LaunchDescription([
         webots_launch,
         state_publisher_launch,
 
         use_mapping_cmd,
         mapping_launch,
-        localization_launch
+        localization_launch,
         
+        use_navigation_cmd,
+        navigation_launch
 
     ])
