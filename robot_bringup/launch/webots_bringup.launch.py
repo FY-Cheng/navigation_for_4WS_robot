@@ -46,15 +46,16 @@ def generate_launch_description():
     mapping_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
-                get_package_share_directory('robot_cartographer'),
+                get_package_share_directory('robot_slam_toolbox'),
                 'launch',
-                'robot_cartographer_mapping.launch.py'
+                'slam_toolbox.launch.py'
             )
         ),
         condition=IfCondition(use_mapping),
         launch_arguments={
-            'use_rviz': 'true',
-            'use_sim_time': 'true'
+            'use_sim_time': 'true',
+            'slam_mode': 'mapping',
+            'use_rviz': 'false'
         }.items()
     )
 
@@ -62,14 +63,16 @@ def generate_launch_description():
     localization_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
-                get_package_share_directory('robot_cartographer'),
+                get_package_share_directory('robot_slam_toolbox'),
                 'launch',
-                'robot_cartographer_localization.launch.py'
+                'slam_toolbox.launch.py'
             )
         ),
         condition=UnlessCondition(use_mapping),
         launch_arguments={
-            'use_sim_time': 'true'
+            'use_sim_time': 'true',
+            'slam_mode': 'localization',
+            'use_rviz': 'false'
         }.items()
     )
 
@@ -107,5 +110,4 @@ def generate_launch_description():
         
         use_navigation_cmd,
         navigation_launch
-
     ])

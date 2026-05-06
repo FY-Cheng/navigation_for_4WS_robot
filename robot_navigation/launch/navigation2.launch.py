@@ -89,8 +89,8 @@ def generate_launch_description():
     ld.add_action(map_arg)
     ld.add_action(params_arg)
     ld.add_action(nav2_bringup)
-    ld.add_action(map_server_node)
-    ld.add_action(lifecycle_manager_node)
+    # ld.add_action(map_server_node)
+    # ld.add_action(lifecycle_manager_node)
     ld.add_action(rviz_node)
 
     return ld

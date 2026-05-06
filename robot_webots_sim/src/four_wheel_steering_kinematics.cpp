@@ -67,6 +67,14 @@ bool FourWheelSteeringKinematics::isSteerAlign(const std::array<double, 4>& targ
 }
 
 
+bool FourWheelSteeringKinematics::ifCmdVelZero(const std::array<double, 4> target_drive) {
+    for (const auto& vel : target_drive) {
+        if (fabs(vel) > 1e-3) return false;
+    }
+    return true;
+}
+
+
 void FourWheelSteeringKinematics::setWheelCommands(std::array<double, 4> target_steer, std::array<double, 4> target_drive) {
     // 这里将舵轮角度限制到[-pi/2, pi/2]范围内，防止舵轮需要大角度旋转
     for (size_t i = 0; i < 4; ++i) {
@@ -80,6 +88,7 @@ void FourWheelSteeringKinematics::setWheelCommands(std::array<double, 4> target_
     }
 
     bool steering_align_done = isSteerAlign(target_steer);
+    bool cmd_vel_zero = ifCmdVelZero(target_drive);
 
     if (0){
         RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringKinematics"), 
@@ -91,7 +100,9 @@ void FourWheelSteeringKinematics::setWheelCommands(std::array<double, 4> target_
     }
 
     for (size_t i = 0; i < 4; ++i) {
-        wb_motor_set_position(steer_motors_[i], target_steer[i]);
+        if (!cmd_vel_zero) {
+            wb_motor_set_position(steer_motors_[i], target_steer[i]);
+        }
         wb_motor_set_velocity(drive_motors_[i], steering_align_done ? target_drive[i] : 0.0);
     }
 }

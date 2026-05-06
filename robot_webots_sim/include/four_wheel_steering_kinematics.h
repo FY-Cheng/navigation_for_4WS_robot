@@ -38,6 +38,8 @@ private:
         double& Vx, double& Vy, double& Omega  // 输出：底盘速度
     );
 
+    bool ifCmdVelZero(const std::array<double, 4> target_drive);
+
     // 你的四舵轮命名
     std::array<std::string, 4> STEER_MOTORS = {
         "steer_fl", "steer_fr", "steer_rl", "steer_rr"

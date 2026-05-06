@@ -6,15 +6,15 @@ options = {
   trajectory_builder = TRAJECTORY_BUILDER,
 
   map_frame = "map",
-  tracking_frame = "imu",
-  published_frame = "odom",
+  tracking_frame = "base_footprint",
+  published_frame = "base_footprint",
   odom_frame = "odom",
 
-  provide_odom_frame = false,
+  provide_odom_frame = true,
   publish_frame_projected_to_2d = true,
 
   use_pose_extrapolator = true,
-  use_odometry = true,
+  use_odometry = false,
   use_nav_sat = false,
   use_landmarks = false,
 
@@ -38,7 +38,7 @@ options = {
   landmarks_sampling_ratio = 1.,
 }
 
-TRAJECTORY_BUILDER_3D.num_accumulated_range_data = 2  -- 累计2帧点云，3D匹配更稳
+TRAJECTORY_BUILDER_3D.num_accumulated_range_data = 1  -- 累计2帧点云，3D匹配更稳
 TRAJECTORY_BUILDER_3D.voxel_filter_size = 0.15        -- 3D点云降采样，降噪提速
 -- IMU重力约束（人形机器人姿态稳定核心）
 TRAJECTORY_BUILDER_3D.imu_gravity_time_constant = 10.0
