@@ -45,11 +45,10 @@ docking_server:
 
 controller_server:
   ros__parameters:
-    controller_frequency: 10.0
-    min_x_velocity_threshold: 0.001
-    min_y_velocity_threshold: 0.001
-    min_theta_velocity_threshold: 0.001
-    publish_zero_velocity: False
+    controller_frequency: 20.0
+    min_x_velocity_threshold: 0.01
+    min_y_velocity_threshold: 0.01
+    min_theta_velocity_threshold: 0.01
 
     # 检查器插件
     progress_checker_plugins: ["progress_checker"]
@@ -58,36 +57,36 @@ controller_server:
     enable_stamped_cmd_vel: False
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
-      required_movement_radius: 0.1
+      required_movement_radius: 0.5
       movement_time_allowance: 10.0
     goal_checker:
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.25
-      yaw_goal_tolerance: 0.25
+      xy_goal_tolerance: 0.2
+      yaw_goal_tolerance: 0.2
       stateful: True
     FollowPath:
-      # plugin: "nav2_rotation_shim_controller::RotationShimController"
-      # angular_dist_threshold: 0.785
-      # forward_sampling_distance: 0.5
-      # angular_disengage_threshold: 0.3925
-      # rotate_to_heading_angular_vel: 1.8
-      # max_angular_accel: 3.2
-      # simulate_ahead_time: 1.0
-      # rotate_to_goal_heading: False
-      # primary_controller: "dwb_core::DWBLocalPlanner"
+      plugin: "nav2_rotation_shim_controller::RotationShimController"
+      angular_dist_threshold: 0.785 # 弧度（0.785 rad = 45°）
+      forward_sampling_distance: 0.5
+      angular_disengage_threshold: 0.3925 # 弧度（0.3925 rad = 22.5°）
+      rotate_to_heading_angular_vel: 1.8
+      max_angular_accel: 3.2
+      simulate_ahead_time: 1.0
+      rotate_to_goal_heading: True
+      primary_controller: "dwb_core::DWBLocalPlanner"
 
+      # plugin: "dwb_core::DWBLocalPlanner"
       # DWB参数
-      plugin: "dwb_core::DWBLocalPlanner"
       debug_trajectory_details: True
       publish_trajectories: True
-      xy_goal_tolerance: 0.05
+      xy_goal_tolerance: 0.1
       path_length_tolerance: 1.0
-      trans_stopped_velocity: 0.25
+      trans_stopped_velocity: 0.05
       short_circuit_trajectory_evaluation: True
       limit_vel_cmd_in_traj: False
       stateful: True
       # 运动学参数
-      min_vel_x: -0.5
+      min_vel_x: 0.0
       min_vel_y: -0.5
       max_vel_x: 0.5
       max_vel_y: 0.5
@@ -98,10 +97,10 @@ controller_server:
       # 加速度限制
       acc_lim_x: 1.5
       acc_lim_y: 1.5
-      acc_lim_theta: 2.0
+      acc_lim_theta: 1.0
       decel_lim_x: -1.5
       decel_lim_y: -1.5
-      decel_lim_theta: -2.0
+      decel_lim_theta: -1.0
       # 轨迹采样
       vx_samples: 10
       vy_samples: 10
@@ -111,7 +110,7 @@ controller_server:
       angular_granularity: 0.1
       # 评价器
       critics: [
-        "RotateToGoal", 
+        # "RotateToGoal", 
         "Oscillation", 
         "BaseObstacle", 
         "GoalAlign", 
@@ -119,16 +118,19 @@ controller_server:
         "PathDist", 
         "GoalDist"
       ]
+      Oscillation.scale: 2.0
       BaseObstacle.scale: 0.02
       PathAlign.scale: 32.0
-      PathAlign.forward_point_distance: 0.5
+      PathAlign.forward_point_distance: 0.1
       GoalAlign.scale: 24.0
       GoalAlign.forward_point_distance: 0.1
       PathDist.scale: 32.0
       GoalDist.scale: 24.0
-      RotateToGoal.scale: 32.0
-      RotateToGoal.slowing_factor: 5.0
-      RotateToGoal.lookahead_time: -1.0
+      # RotateToGoal.scale: 64.0
+      # RotateToGoal.slowing_factor: 5.0
+      # RotateToGoal.lookahead_time: 0.8
+      # RotateToGoal.xy_goal_tolerance: 0.1
+      # RotateToGoal.trans_stopped_velocity: 0.05
 
 local_costmap:
   local_costmap:
