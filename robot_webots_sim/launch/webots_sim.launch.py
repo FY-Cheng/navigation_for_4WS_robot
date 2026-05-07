@@ -23,8 +23,10 @@ def generate_launch_description():
         'webots_rviz.rviz'
     )
 
+
+    world_file = os.path.join(get_package_share_directory(package_name), 'worlds', 'four_wheel_steering_robot.wbt')
     webots = ExecuteProcess(
-        cmd=['webots'],
+        cmd=['webots', world_file],
         output='screen'
     )
 
