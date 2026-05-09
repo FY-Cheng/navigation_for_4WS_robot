@@ -11,6 +11,8 @@ Panels:
         - /Local Group1/Local Costmap1/Topic1
         - /Local Group1/Local Costmap1/Update Topic1
         - /Controller1
+        - /Controller1/MPPI Traj1
+        - /Controller1/MPPI Traj1/Namespaces1
       Splitter Ratio: 0.47089946269989014
     Tree Height: 1504
   - Class: rviz_common/Selection
@@ -68,13 +70,13 @@ Visualization Manager:
         base_link:
           Value: false
         drive_fl_solid:
-          Value: false
+          Value: true
         drive_fr_solid:
-          Value: false
+          Value: true
         drive_rl_solid:
-          Value: false
+          Value: true
         drive_rr_solid:
-          Value: false
+          Value: true
         gps:
           Value: false
         gyro:
@@ -206,8 +208,8 @@ Visualization Manager:
           Class: rviz_default_plugins/Path
           Color: 237; 51; 59
           Enabled: true
-          Head Diameter: 0.10000000149011612
-          Head Length: 0.10000000149011612
+          Head Diameter: 0.07000000029802322
+          Head Length: 0.03999999910593033
           Length: 0.30000001192092896
           Line Style: Lines
           Line Width: 0.029999999329447746
@@ -219,8 +221,8 @@ Visualization Manager:
           Pose Color: 255; 85; 255
           Pose Style: Arrows
           Radius: 0.029999999329447746
-          Shaft Diameter: 0.05000000074505806
-          Shaft Length: 0.30000001192092896
+          Shaft Diameter: 0.03999999910593033
+          Shaft Length: 0.0010000000474974513
           Topic:
             Depth: 5
             Durability Policy: Volatile
@@ -367,7 +369,7 @@ Visualization Manager:
             Value: /trajectories
           Value: true
         - Class: rviz_default_plugins/MarkerArray
-          Enabled: true
+          Enabled: false
           Name: DWB Traj
           Namespaces:
             {}
@@ -377,7 +379,7 @@ Visualization Manager:
             History Policy: Keep Last
             Reliability Policy: Reliable
             Value: /marker
-          Value: true
+          Value: false
         - Alpha: 1
           Buffer Length: 1
           Class: rviz_default_plugins/Path
@@ -454,25 +456,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 11.506586074829102
+      Distance: 20.790924072265625
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.1254100799560547
-        Y: -0.03770945966243744
-        Z: -0.7607824802398682
+        X: 1.3773913383483887
+        Y: -0.4524020254611969
+        Z: -0.7592434883117676
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.4947963953018188
+      Pitch: 1.3447966575622559
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.122298240661621
+      Yaw: 2.4622976779937744
     Saved: ~
 Window Geometry:
   Displays:
