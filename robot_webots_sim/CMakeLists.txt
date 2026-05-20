@@ -56,7 +56,7 @@ install(TARGETS robot_webots_sim_node
 
 # 安装 launch 文件夹到 ROS 2 搜索路径
 install(
-  DIRECTORY launch param worlds rviz
+  DIRECTORY launch worlds rviz
   DESTINATION share/${PROJECT_NAME}
 )
 

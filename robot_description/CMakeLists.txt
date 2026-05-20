@@ -12,7 +12,7 @@ find_package(xacro REQUIRED)
 
 
 install(
-  DIRECTORY meshes urdf
+  DIRECTORY urdf
   DESTINATION share/${PROJECT_NAME}
 )
 
