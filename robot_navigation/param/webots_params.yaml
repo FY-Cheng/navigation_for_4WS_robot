@@ -1,12 +1,18 @@
 
+###############################################################################
+# 行为树导航器配置
+# - 负责导航行为树的管理和执行
+# - 包含navigate_to_pose和navigate_through_poses两种导航模式
+###############################################################################
 bt_navigator:
   ros__parameters:
     global_frame: map
     robot_base_frame: base_footprint  # 统一机器人基坐标系
-    transform_tolerance: 0.1
+    transform_tolerance: 1.0  # sim 0.5 is not enough
     filter_duration: 0.3
     # 行为树配置（Jazzy默认）
-    default_nav_to_pose_bt_xml: "$(find-pkg-share nav2_bt_navigator)/behavior_trees/nav_to_pose_with_consistent_replanning_and_if_path_becomes_invalid.xml"
+    # default_nav_to_pose_bt_xml: "$(find-pkg-share nav2_bt_navigator)/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"
+    default_nav_to_pose_bt_xml: "$(find-pkg-share nav2_bt_navigator)/behavior_trees/navigate_w_recovery_and_replanning_only_if_path_becomes_invalid.xml"
     default_nav_through_poses_bt_xml: "$(find-pkg-share nav2_bt_navigator)/behavior_trees/navigate_through_poses_w_replanning_and_recovery.xml"
     always_reload_bt_xml: False
     goal_blackboard_id: goal
@@ -31,6 +37,11 @@ bt_navigator:
       - undock_robot
       - wait
 
+###############################################################################
+# 充电站服务器配置
+# - 处理机器人对接充电坞的相关功能
+# - 支持简单充电坞配置
+###############################################################################
 docking_server:
   ros__parameters:
     dock_plugins: ['simple_dock']
@@ -43,222 +54,250 @@ docking_server:
       pose: [0.0, 0.0, 0.0]
     enable_stamped_cmd_vel: False
 
+###############################################################################
+# 控制器服务器配置
+# - 负责机器人运动控制和轨迹跟踪
+# - 包含TEB局部规划器参数配置
+###############################################################################
 controller_server:
   ros__parameters:
-    controller_frequency: 20.0
+    controller_frequency: 10.0
     min_x_velocity_threshold: 0.01
     min_y_velocity_threshold: 0.01
     min_theta_velocity_threshold: 0.01
-
-    # 检查器插件
     progress_checker_plugins: ["progress_checker"]
     goal_checker_plugins: ["goal_checker"]
-    controller_plugins: ["FollowPath"]
+    controller_plugins: ["FollowPath", "FollowPathOMNI"]
     enable_stamped_cmd_vel: False
+
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
       required_movement_radius: 0.5
-      movement_time_allowance: 10.0
+      movement_time_allowance: 20.0
+    
     goal_checker:
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.2
       yaw_goal_tolerance: 0.2
       stateful: True
+
     FollowPath:
-      plugin: "nav2_rotation_shim_controller::RotationShimController"
-      angular_dist_threshold: 0.785 # 弧度（0.785 rad = 45°）
-      forward_sampling_distance: 0.5
-      angular_disengage_threshold: 0.3925 # 弧度（0.3925 rad = 22.5°）
-      rotate_to_heading_angular_vel: 1.8
-      max_angular_accel: 3.2
-      simulate_ahead_time: 1.0
-      rotate_to_goal_heading: True
-      # primary_controller: "dwb_core::DWBLocalPlanner"
-      primary_controller: "nav2_mppi_controller::MPPIController"
+      plugin: "teb_local_planner::TebLocalPlannerROS"
 
-      # # DWB控制器
-      # # plugin: "dwb_core::DWBLocalPlanner"
-      # debug_trajectory_details: True
-      # publish_trajectories: True
-      # xy_goal_tolerance: 0.1
-      # path_length_tolerance: 1.0
-      # trans_stopped_velocity: 0.05
-      # short_circuit_trajectory_evaluation: True
-      # limit_vel_cmd_in_traj: False
-      # stateful: True
-      # # 运动学参数
-      # min_vel_x: 0.0
-      # min_vel_y: -0.5
-      # max_vel_x: 0.5
-      # max_vel_y: 0.5
-      # max_vel_theta: 1.0
-      # min_speed_xy: 0.0
-      # max_speed_xy: 0.5
-      # min_speed_theta: 0.0
-      # # 加速度限制
-      # acc_lim_x: 1.5
-      # acc_lim_y: 1.5
-      # acc_lim_theta: 1.0
-      # decel_lim_x: -1.5
-      # decel_lim_y: -1.5
-      # decel_lim_theta: -1.0
-      # # 轨迹采样
-      # vx_samples: 10
-      # vy_samples: 10
-      # vtheta_samples: 20
-      # sim_time: 1.7
-      # linear_granularity: 0.1
-      # angular_granularity: 0.1
-      # # 评价器
-      # critics: [
-      #   # "RotateToGoal", 
-      #   "Oscillation", 
-      #   "BaseObstacle", 
-      #   "GoalAlign", 
-      #   "PathAlign", 
-      #   "PathDist", 
-      #   "GoalDist"
-      # ]
-      # Oscillation.scale: 2.0
-      # BaseObstacle.scale: 0.02
-      # PathAlign.scale: 32.0
-      # PathAlign.forward_point_distance: 0.1
-      # GoalAlign.scale: 24.0
-      # GoalAlign.forward_point_distance: 0.1
-      # PathDist.scale: 32.0
-      # GoalDist.scale: 24.0
-      # # RotateToGoal.scale: 64.0
-      # # RotateToGoal.slowing_factor: 5.0
-      # # RotateToGoal.lookahead_time: 0.8
-      # # RotateToGoal.xy_goal_tolerance: 0.1
-      # # RotateToGoal.trans_stopped_velocity: 0.05
-      
+      teb_autosize: 1.0
+      dt_ref: 0.3
+      dt_hysteresis: 0.1
+      max_samples: 200
+      global_plan_overwrite_orientation: True
+      allow_init_with_backwards_motion: False
+      max_global_plan_lookahead_dist: 3.0
+      global_plan_viapoint_sep: 0.6
+      global_plan_prune_distance: 1.0
+      exact_arc_length: False
+      feasibility_check_no_poses: 2
+      publish_feedback: False
 
-      # MPPI 控制器
-      # plugin: "nav2_mppi_controller::MPPIController"
-      time_steps: 20
-      model_dt: 0.05
-      batch_size: 2000
-      vx_std: 0.5
-      vy_std: 0.0
-      wz_std: 0.2
-      vx_max: 1.5
-      vx_min: 0.0
-      vy_min: 0.0
-      vy_max: 0.0
-      vy_max: 0.0
-      wz_max: 1.9
-      ax_max: 4.0
-      ax_min: -4.0
-      ay_max: 0.0
-      ay_min: 0.0
-      az_max: 3.2
-      iteration_count: 1
-      prune_distance: 2.0
-      transform_tolerance: 0.1
-      temperature: 0.3
-      gamma: 0.015
-      motion_model: "Ackermann"
-      visualize: True
-      TrajectoryVisualizer:
-        trajectory_step: 5
-        time_step: 3
-      AckermannConstraints:
-        min_turning_r: 0.1
-      critics: [
-        "ConstraintCritic", 
-        "CostCritic", 
-        "GoalCritic", 
-        "GoalAngleCritic", 
-        "PathAlignCritic", 
-        "PathFollowCritic", 
-        "PathAngleCritic", 
-        "PreferForwardCritic"
-      ]
-      ConstraintCritic:
-        enabled: true
-        cost_power: 1
-        cost_weight: 4.0
-      GoalCritic:
-        enabled: true
-        cost_power: 1
-        cost_weight: 5.0
-        threshold_to_consider: 1.4
-      GoalAngleCritic:
-        enabled: true
-        cost_power: 1
-        cost_weight: 3.0
-        threshold_to_consider: 0.5
-      PreferForwardCritic:
-        enabled: true
-        cost_power: 1
-        cost_weight: 5.0
-        threshold_to_consider: 0.5
-      # Option to replace Cost and use Obstacles instead
-      # ObstaclesCritic:
-      #   enabled: true
-      #   cost_power: 1
-      #   repulsion_weight: 1.5
-      #   critical_weight: 20.0
-      #   consider_footprint: false
-      #   collision_cost: 10000.0
-      #   collision_margin_distance: 0.1
-      #   near_goal_distance: 0.5
-      CostCritic:
-        enabled: true
-        cost_power: 1
-        cost_weight: 3.81
-        critical_cost: 300.0
-        consider_footprint: true
-        collision_cost: 1000000.0
-        near_goal_distance: 1.0
-        trajectory_point_step: 2
-      PathAlignCritic:
-        enabled: true
-        cost_power: 1
-        cost_weight: 14.0
-        max_path_occupancy_ratio: 0.05
-        trajectory_point_step: 4
-        threshold_to_consider: 0.5
-        offset_from_furthest: 20
-        use_path_orientations: false
-      PathFollowCritic:
-        enabled: true
-        cost_power: 1
-        cost_weight: 5.0
-        offset_from_furthest: 5
-        threshold_to_consider: 1.4
-      PathAngleCritic:
-        enabled: true
-        cost_power: 1
-        cost_weight: 10.0
-        mode: 0
-        offset_from_furthest: 4
-        threshold_to_consider: 0.5
-        max_angle_to_furthest: 0.2
-        forward_preference: true
-      # VelocityDeadbandCritic:
-      #   enabled: true
-      #   cost_power: 1
-      #   cost_weight: 35.0
-      #   deadband_velocities: [0.05, 0.05, 0.05]
-      # TwirlingCritic:
-      #   enabled: true
-      #   twirling_cost_power: 1
-      #   twirling_cost_weight: 10.0
+      # Robot
+      max_vel_x: 1.2
+      max_vel_x_backwards: 0.2    # 限制后退速度
+      max_vel_y: 0.0   
+      max_vel_theta: 0.5
+      acc_lim_x: 2.5
+      acc_lim_y: 0.0  
+      acc_lim_theta: 3.2
+      min_turning_radius: 0.0
 
+      footprint_model:
+        type: "polygon"
+        #radius: 0.17
+        points: "[[0.3, 0.3], [0.3, -0.3], [-0.3, -0.3], [-0.3, 0.3]]"
+      # GoalTolerance
+      free_goal_vel: False
+
+      # Obstacles
+      min_obstacle_dist: 0.27
+      inflation_dist: 0.6
+      include_costmap_obstacles: True
+      costmap_obstacles_behind_robot_dist: 1.0
+      obstacle_poses_affected: 25
+      dynamic_obstacle_inflation_dist: 0.6
+      include_dynamic_obstacles: True
+      costmap_converter_plugin: "costmap_converter::CostmapToPolygonsDBSMCCH"
+      #costmap_converter_plugin: "costmap_converter::CostmapToDynamicObstacles"
+      costmap_converter_spin_thread: True
+      costmap_converter_rate: 5
+
+      # Optimization
+      no_inner_iterations: 5
+      no_outer_iterations: 4
+      optimization_activate: True
+      optimization_verbose: False
+      penalty_epsilon: 0.1
+      obstacle_cost_exponent: 4.0
+      weight_max_vel_x: 2.0
+      weight_max_vel_theta: 0.5
+      weight_acc_lim_x: 0.5
+      weight_acc_lim_theta: 1.0
+      weight_kinematics_nh: 1000.0
+      weight_kinematics_forward_drive: 10.0
+      weight_kinematics_turning_radius: 1.0
+      weight_optimaltime: 1.0
+      weight_shortest_path: 1.0
+      weight_obstacle: 50.0
+      weight_inflation: 0.2
+      weight_dynamic_obstacle: 10.0
+      weight_dynamic_obstacle_inflation: 0.2
+      weight_viapoint: 10.0
+      weight_adapt_factor: 2.0
+
+      # Homotopy Class Planner
+      enable_homotopy_class_planning: False
+      enable_multithreading: True
+      max_number_classes: 4
+      selection_cost_hysteresis: 5.0
+      selection_prefer_initial_plan: 1.0
+      selection_obst_cost_scale: 1.0
+      selection_alternative_time_cost: True
+      roadmap_graph_no_samples: 15
+      roadmap_graph_area_width: 5.0
+      roadmap_graph_area_length_scale: 1.0
+      h_signature_prescaler: 0.5
+      h_signature_threshold: 0.1
+      obstacle_heading_threshold: 0.45
+      switching_blocking_period: 0.0
+      viapoints_all_candidates: True
+      delete_detours_backwards: True
+      max_ratio_detours_duration_best_duration: 3.0
+      visualize_hc_graph: False
+      visualize_with_time_as_z_axis_scale: 0.0
+
+      # Recovery
+      shrink_horizon_backup: True
+      shrink_horizon_min_duration: 10.0
+      oscillation_recovery: True
+      oscillation_v_eps: 0.1
+      oscillation_omega_eps: 0.1
+      oscillation_recovery_min_duration: 10.0
+      oscillation_filter_duration: 10.0
+
+    FollowPathOMNI:
+      plugin: "teb_local_planner::TebLocalPlannerROS"
+
+      teb_autosize: 1.0
+      dt_ref: 0.3
+      dt_hysteresis: 0.1
+      max_samples: 500
+      global_plan_overwrite_orientation: True
+      allow_init_with_backwards_motion: True # 允许生成后退轨迹
+      max_global_plan_lookahead_dist: 3.0
+      global_plan_viapoint_sep: 0.6
+      global_plan_prune_distance: 1.0
+      exact_arc_length: False
+      feasibility_check_no_poses: 2
+      publish_feedback: False
+
+      # Robot
+      max_vel_x: 1.2
+      max_vel_x_backwards: 0.3    # 限制后退速度
+      max_vel_y: 0.5   
+      max_vel_theta: 0.5
+      acc_lim_x: 2.5
+      acc_lim_y: 1.5  
+      acc_lim_theta: 3.2
+      min_turning_radius: 0.0
+
+      footprint_model:
+        type: "polygon"
+        #radius: 0.17
+        points: "[[0.3, 0.3], [0.3, -0.3], [-0.3, -0.3], [-0.3, 0.3]]"
+      # GoalTolerance
+      free_goal_vel: False
+
+      # Obstacles
+      min_obstacle_dist: 0.27
+      inflation_dist: 0.6
+      include_costmap_obstacles: True
+      costmap_obstacles_behind_robot_dist: 1.0
+      obstacle_poses_affected: 25
+      dynamic_obstacle_inflation_dist: 0.6
+      include_dynamic_obstacles: True
+      costmap_converter_plugin: "costmap_converter::CostmapToPolygonsDBSMCCH"
+      # costmap_converter_plugin: "costmap_converter::CostmapToDynamicObstacles"
+      costmap_converter_spin_thread: False  # 每次生成规划点再转换 costmap ，略微增加规划延迟，省掉资源
+      costmap_converter_rate: 5
+
+      # Optimization
+      no_inner_iterations: 5
+      no_outer_iterations: 4
+      optimization_activate: True
+      optimization_verbose: False
+      penalty_epsilon: 0.1
+      obstacle_cost_exponent: 4.0
+      weight_max_vel_x: 2.0
+      weight_max_vel_theta: 0.5
+      weight_acc_lim_x: 0.5
+      weight_acc_lim_theta: 1.0
+      weight_kinematics_nh: 1.0
+      weight_kinematics_forward_drive: 1.0
+      weight_kinematics_turning_radius: 1.0
+      weight_optimaltime: 1.0
+      weight_shortest_path: 1.0
+      weight_obstacle: 50.0
+      weight_inflation: 0.2
+      weight_dynamic_obstacle: 10.0
+      weight_dynamic_obstacle_inflation: 0.2
+      weight_viapoint: 100.0
+      weight_adapt_factor: 2.0
+
+      # Homotopy Class Planner
+      enable_homotopy_class_planning: False
+      enable_multithreading: True
+      max_number_classes: 4
+      selection_cost_hysteresis: 5.0
+      selection_prefer_initial_plan: 1.0
+      selection_obst_cost_scale: 1.0
+      selection_alternative_time_cost: True
+      roadmap_graph_no_samples: 15
+      roadmap_graph_area_width: 5.0
+      roadmap_graph_area_length_scale: 1.0
+      h_signature_prescaler: 0.5
+      h_signature_threshold: 0.1
+      obstacle_heading_threshold: 0.45
+      switching_blocking_period: 0.0
+      viapoints_all_candidates: True
+      delete_detours_backwards: True
+      max_ratio_detours_duration_best_duration: 3.0
+      visualize_hc_graph: False
+      visualize_with_time_as_z_axis_scale: 0.0
+
+      # Recovery
+      shrink_horizon_backup: True
+      shrink_horizon_min_duration: 10.0
+      oscillation_recovery: True
+      oscillation_v_eps: 0.1
+      oscillation_omega_eps: 0.1
+      oscillation_recovery_min_duration: 10.0
+      oscillation_filter_duration: 10.0
+
+###############################################################################
+# 局部代价地图配置
+# - 管理机器人周围环境的实时障碍物信息
+# - 使用滚动窗口模式跟随机器人移动
+# - 包含障碍物层和膨胀层配置
+###############################################################################
 local_costmap:
   local_costmap:
     ros__parameters:
-      update_frequency: 5.0
+      update_frequency: 5.0 
       publish_frequency: 2.0
       global_frame: odom
       robot_base_frame: base_footprint
+      transform_tolerance: 1.0
       rolling_window: True  # 局部地图跟随机器人移动
-      width: 4
-      height: 4
+      width: 3
+      height: 3
       resolution: 0.05
-      footprint: "[[0.3, 0.3], [0.3, -0.3], [-0.3, -0.3], [-0.3, 0.3]]"
+      robot_radius: 0.3  # 机器人半径（根据实物修改）
       always_send_full_costmap: True
 
       # 图层插件
@@ -286,22 +325,30 @@ local_costmap:
           obstacle_max_range: 2.5
           obstacle_min_range: 0.0
 
+###############################################################################
+# 全局代价地图配置
+# - 管理全局环境信息包括静态地图和动态障碍物
+# - 包含静态层、障碍物层和膨胀层配置
+# - 支持点云数据输入
+###############################################################################
 global_costmap:
   global_costmap:
     ros__parameters:
       update_frequency: 1.0
       publish_frequency: 1.0
-      transform_tolerance: 0.1
+      transform_tolerance: 1.0 # 0.5 is not enough in sim
       global_frame: map
       robot_base_frame: base_footprint
-      footprint: "[[0.3, 0.3], [0.3, -0.3], [-0.3, -0.3], [-0.3, 0.3]]"
+      robot_radius: 0.3
       resolution: 0.05
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
         enabled: True
         subscribe_to_updates: True
+      
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
@@ -321,6 +368,7 @@ global_costmap:
           marking: True
           data_type: "PointCloud2"
           transport_type: "raw"
+      
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         enabled: True
@@ -328,9 +376,15 @@ global_costmap:
         cost_scaling_factor: 3.0
         inflate_unknown: False
         inflate_around_unknown: True
+      
       always_send_full_costmap: True
       introspection_mode: "disabled"
 
+###############################################################################
+# 地图保存配置
+# - 处理地图保存相关参数
+# - 设置地图保存超时和阈值
+###############################################################################
 map_saver:
   ros__parameters:
     save_map_timeout: 5.0
@@ -338,7 +392,12 @@ map_saver:
     occupied_thresh_default: 0.65
     map_subscribe_transient_local: True
 
-# 全局路径规划器
+###############################################################################
+# 全局路径规划器配置
+# - 负责生成全局路径规划
+# - 使用基于网格的SMAC规划器
+# - 支持未知区域探索
+###############################################################################
 planner_server:
   ros__parameters:
     planner_plugins: ["GridBased"]
@@ -358,7 +417,12 @@ planner_server:
         w_data: 0.2
         tolerance: 1.0e-10
 
-# 行为服务器（旋转、后退、辅助遥控等）
+###############################################################################
+# 行为服务器配置
+# - 管理机器人行为如旋转、后退、等待等
+# - 包含多种行为插件配置
+# - 处理紧急情况下的恢复行为
+###############################################################################
 behavior_server:
   ros__parameters:
     local_costmap_topic: local_costmap/costmap_raw
@@ -387,7 +451,12 @@ behavior_server:
     rotational_acc_lim: 3.2
     enable_stamped_cmd_vel: False
 
-# 航点跟随
+###############################################################################
+# 航点跟随配置
+# - 控制机器人按顺序通过航点
+# - 支持在航点处暂停
+# - 可配置循环频率和失败处理
+###############################################################################
 waypoint_follower:
   ros__parameters:
     loop_rate: 20
@@ -398,7 +467,12 @@ waypoint_follower:
       enabled: True
       waypoint_pause_duration: 200
 
-# 碰撞监控
+###############################################################################
+# 碰撞监控配置
+# - 实时监测机器人周围的碰撞风险
+# - 支持多边形安全区域定义
+# - 可配置不同观测源和响应行为
+###############################################################################
 collision_monitor:
   ros__parameters:
     enabled: True
@@ -406,12 +480,13 @@ collision_monitor:
     odom_frame_id: "odom"
     cmd_vel_in_topic: "cmd_vel_smoothed"
     cmd_vel_out_topic: "cmd_vel"
-    transform_tolerance: 0.5
+    transform_tolerance: 1.0  # 0.5 is not enough in sim
     source_timeout: 5.0
     stop_pub_timeout: 2.0
     enable_stamped_cmd_vel: False
     # 安全区域配置
     polygons: ["PolygonStop"]
+    
     PolygonStop:
       type: "polygon"
       points: "[[0.3, 0.3], [0.3, -0.3], [-0.3, -0.3], [-0.3, 0.3]]"
@@ -420,6 +495,7 @@ collision_monitor:
       visualize: True
       polygon_pub_topic: "polygon_stop"
     # 激光观测源（点云适配）
+    
     observation_sources: ["pointcloud"]
     pointcloud:
       source_timeout: 0.2
@@ -427,7 +503,12 @@ collision_monitor:
       topic: "/lidar/point_cloud"
       enabled: False
 
-# 速度平滑器
+###############################################################################
+# 速度平滑器配置
+# - 处理速度命令的平滑过渡
+# - 限制最大加速度和减速度
+# - 支持开环和闭环控制模式
+###############################################################################
 velocity_smoother:
   ros__parameters:
     smoothing_frequency: 20.0

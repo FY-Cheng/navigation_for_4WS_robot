@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<robot name="four_wheel_steering_robot" xmlns:xacro="http://ros.org/wiki/xacro">
+
+<!-- ==================================================
+【1】全局变量定义（所有可修改参数都在这里）
+================================================== -->
+<xacro:property name="wheel_radius"     value="0.075"/>
+<xacro:property name="wheel_length"     value="0.06"/>
+<xacro:property name="steer_effort"     value="10"/>
+<xacro:property name="steer_velocity"   value="10"/>
+<xacro:property name="drive_effort"     value="10"/>
+<xacro:property name="drive_velocity"   value="40"/>
+<xacro:property name="wheel_spacing_length"  value="0.235"/>
+<xacro:property name="wheel_spacing_width"   value="0.209"/>
+
+<!-- ==================================================
+【2】轮子宏定义：转向 + 驱动一体化模块
+================================================== -->
+<xacro:macro name="steer_drive_wheel" params="prefix x y">
+  
+  <link name="steer_${prefix}_solid"/>
+
+  <joint name="steer_${prefix}" type="continuous">
+    <parent link="base_link"/>
+    <child link="steer_${prefix}_solid"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="${steer_effort}" velocity="${steer_velocity}"/>
+    <origin xyz="${x} ${y} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="drive_${prefix}" type="continuous">
+    <parent link="steer_${prefix}_solid"/>
+    <child link="drive_${prefix}_solid"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="${drive_effort}" velocity="${drive_velocity}"/>
+    <origin xyz="0 0 0" rpy="1.570792 0.0 3.141591"/>
+  </joint>
+
+  <link name="drive_${prefix}_solid">
+    <visual>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_length}"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_length}"/>
+      </geometry>
+    </collision>
+  </link>
+
+</xacro:macro>
+
+<!-- ==================================================
+【3】基础车体
+================================================== -->
+<link name="base_footprint"/>
+
+<joint name="base_footprint_joint" type="fixed">
+  <parent link="base_footprint"/>
+  <child link="base_link"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+</joint>
+
+<link name="base_link"/>
+
+<!-- ==================================================
+【4】四个轮子（调用宏）
+================================================== -->
+<xacro:steer_drive_wheel prefix="fl" x="${wheel_spacing_length}"  y="${wheel_spacing_width}"/>
+<xacro:steer_drive_wheel prefix="fr" x="${wheel_spacing_length}"  y="-${wheel_spacing_width}"/>
+<xacro:steer_drive_wheel prefix="rl" x="-${wheel_spacing_length}" y="${wheel_spacing_width}"/>
+<xacro:steer_drive_wheel prefix="rr" x="-${wheel_spacing_length}" y="-${wheel_spacing_width}"/>
+
+<!-- ==================================================
+【5】IMU / 陀螺仪 / 加速度计
+================================================== -->
+<link name="accelerometer"/>
+
+<joint name="base_link_accelerometer_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="accelerometer"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+</joint>
+
+<link name="gyro"/>
+
+<joint name="base_link_gyro_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="gyro"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+</joint>
+
+<link name="imu"/>
+
+<joint name="base_link_imu_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="imu"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+</joint>
+
+<!-- ==================================================
+【6】GPS / Pen
+================================================== -->
+<link name="gps"/>
+
+<joint name="base_link_gps_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="gps"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+</joint>
+
+<link name="pen"/>
+
+<joint name="base_link_pen_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="pen"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+</joint>
+
+<!-- ==================================================
+【7】雷达
+================================================== -->
+<link name="lidar"/>
+
+<joint name="base_link_lidar_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="lidar"/>
+  <origin xyz="0 0 0.05" rpy="0 0 0"/>
+</joint>
+
+<!-- ==================================================
+【8】TOF 相机
+================================================== -->
+<link name="tof"/>
+
+<joint name="base_link_tof_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="tof"/>
+  <origin xyz="0.218435 0 0.031895" rpy="0 -0.261795 0"/>
+</joint>
+
+<link name="tof_optical"/>
+
+<joint name="tof_to_optical_joint" type="fixed">
+  <parent link="tof"/>
+  <child link="tof_optical"/>
+  <origin xyz="0 0 0" rpy="1.570796 3.141592 1.570796"/>
+</joint>
+
+</robot>

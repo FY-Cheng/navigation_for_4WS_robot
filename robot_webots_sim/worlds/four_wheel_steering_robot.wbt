@@ -8,8 +8,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.0013561517234511383 0.9999982518697207 -0.0012872878488547567 1.6208008965413632
-  position 1.2883342049709547 -0.19157528801473658 26.131176919455847
+  orientation 0.00023522861957861726 -0.9999998748340457 -0.0004415873517622555 5.292386047384659
+  position -1.1293594669734233 -0.2117698886284855 1.9798164045069186
 }
 TexturedBackground {
 }
@@ -21,7 +21,7 @@ RectangleArena {
   wallHeight 1
 }
 Robot {
-  translation -0.0925239921030885 -0.032354219771321774 0.04706053828651605
+  translation -0.092524 -0.0323542 0.0770605
   children [
     RangeFinder {
       translation 0.218435 0 0.0318947
@@ -78,7 +78,7 @@ Robot {
       verticalFieldOfView 0.4
       numberOfLayers 32
       near 0.37
-      minRange 0.37
+      minRange 0.41
       maxRange 30
     }
     Pen {
@@ -100,7 +100,7 @@ Robot {
             transparency 0.2
           }
           geometry DEF body_size Box {
-            size 0.5 0.5 0.05
+            size 0.61 0.35 0.01
           }
         }
       ]
@@ -108,8 +108,8 @@ Robot {
     DEF steer_fl_wheel HingeJoint {
       jointParameters HingeJointParameters {
         position -1.3698553402718971e-10
-        axis 0 0 1
-        anchor 0.175 0.175 0
+        axis 0 0 2
+        anchor 0.235 0.209 0
       }
       device [
         RotationalMotor {
@@ -120,7 +120,7 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0.175 0.175 0
+        translation 0.23500000002794497 0.20899999995068513 0
         children [
           DEF drive_fl_wheel HingeJoint {
             jointParameters HingeJointParameters {
@@ -147,8 +147,8 @@ Robot {
                     }
                   }
                   geometry Cylinder {
-                    height 0.05
-                    radius 0.05
+                    height 0.06
+                    radius 0.075
                   }
                 }
               ]
@@ -170,8 +170,8 @@ Robot {
     DEF steer_fr_wheel HingeJoint {
       jointParameters HingeJointParameters {
         position -2.240723162572067e-10
-        axis 0 0 1
-        anchor 0.175 -0.175 0
+        axis 0 0 2
+        anchor 0.235 -0.209 0
       }
       device [
         RotationalMotor {
@@ -182,7 +182,7 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0.175 -0.175 0
+        translation 0.23499999998476306 -0.20900000002688865 0
         children [
           DEF drive_fr_wheel HingeJoint {
             jointParameters HingeJointParameters {
@@ -209,8 +209,8 @@ Robot {
                     }
                   }
                   geometry Cylinder {
-                    height 0.05
-                    radius 0.05
+                    height 0.06
+                    radius 0.075
                   }
                 }
               ]
@@ -232,8 +232,8 @@ Robot {
     DEF steer_rl_wheel HingeJoint {
       jointParameters HingeJointParameters {
         position -2.367741558373382e-10
-        axis 0 0 1
-        anchor -0.175 0.175 0
+        axis 0 0 2
+        anchor -0.235 0.209 0
       }
       device [
         RotationalMotor {
@@ -244,7 +244,7 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation -0.175 0.175 0
+        translation -0.2349999999838993 0.20900000002841287 0
         children [
           DEF drive_rl_wheel HingeJoint {
             jointParameters HingeJointParameters {
@@ -271,8 +271,8 @@ Robot {
                     }
                   }
                   geometry Cylinder {
-                    height 0.05
-                    radius 0.05
+                    height 0.06
+                    radius 0.075
                   }
                 }
               ]
@@ -294,8 +294,8 @@ Robot {
     DEF steer_rr_wheel HingeJoint {
       jointParameters HingeJointParameters {
         position -1.4928665434820957e-10
-        axis 0 0 1
-        anchor -0.175 -0.175 0
+        axis 0 0 2
+        anchor -0.235 -0.209 0
       }
       device [
         RotationalMotor {
@@ -306,7 +306,7 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation -0.175 -0.175 0
+        translation -0.23500000001015148 -0.2089999999820856 0
         children [
           DEF drive_rr_wheel HingeJoint {
             jointParameters HingeJointParameters {
@@ -333,8 +333,8 @@ Robot {
                     }
                   }
                   geometry Cylinder {
-                    height 0.05
-                    radius 0.05
+                    height 0.06
+                    radius 0.075
                   }
                 }
               ]

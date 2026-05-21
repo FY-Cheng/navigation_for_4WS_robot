@@ -39,21 +39,21 @@ void FourWheelSteeringKinematics::setVelocity(double vx, double vy, double omega
 void FourWheelSteeringKinematics::inverseKinematics(double vx, double vy, double omega,
         std::array<double, 4>& target_steer, std::array<double, 4>& target_drive) {
     
-    double h = CHASSIS_HALF_WIDTH;
-    double hw = h * omega;
+    double lw = CHASSIS_HALF_LENGTH * omega;
+    double ww = CHASSIS_HALF_WIDTH * omega;
 
     target_steer = {
-        std::atan2((vy + hw), (vx - hw)),
-        std::atan2((vy + hw), (vx + hw)),
-        std::atan2((vy - hw), (vx - hw)),
-        std::atan2((vy - hw), (vx + hw))
+        std::atan2((vy + lw), (vx - ww)),
+        std::atan2((vy + lw), (vx + ww)),
+        std::atan2((vy - lw), (vx - ww)),
+        std::atan2((vy - lw), (vx + ww))
     };
 
     target_drive = {
-        std::sqrt(std::pow(vx - hw, 2) + std::pow(hw + vy, 2)) / WHEEL_RADIUS,
-        std::sqrt(std::pow(vx + hw, 2) + std::pow(hw + vy, 2)) / WHEEL_RADIUS,
-        std::sqrt(std::pow(vx - hw, 2) + std::pow(hw - vy, 2)) / WHEEL_RADIUS,
-        std::sqrt(std::pow(vx + hw, 2) + std::pow(hw - vy, 2)) / WHEEL_RADIUS
+        std::sqrt(std::pow(vx - ww, 2) + std::pow(lw + vy, 2)) / WHEEL_RADIUS,
+        std::sqrt(std::pow(vx + ww, 2) + std::pow(lw + vy, 2)) / WHEEL_RADIUS,
+        std::sqrt(std::pow(vx - ww, 2) + std::pow(lw - vy, 2)) / WHEEL_RADIUS,
+        std::sqrt(std::pow(vx + ww, 2) + std::pow(lw - vy, 2)) / WHEEL_RADIUS
     };
 }
 
@@ -135,13 +135,11 @@ void FourWheelSteeringKinematics::forwardKinematics (
     const std::array<double, 4>& drive,    // 输入：4个驱动轮的角速度
     double& Vx, double& Vy, double& Omega) // 输出：底盘速度
 {
-    const double h = CHASSIS_HALF_WIDTH;
-    const double r = WHEEL_RADIUS;
 
     // 步骤1：计算每个轮子的速度分量 (vx_i, vy_i)
     std::array<double, 4> vx, vy;
     for (int i = 0; i < 4; ++i) {
-        double v_wheel = drive[i] * r;               // 轮子线速度
+        double v_wheel = drive[i] * WHEEL_RADIUS;    // 轮子线速度
         vx[i] = v_wheel * std::cos(steer[i]);        // x方向分量
         vy[i] = v_wheel * std::sin(steer[i]);        // y方向分量
     }
@@ -151,7 +149,7 @@ void FourWheelSteeringKinematics::forwardKinematics (
     Vy = (vy[0] + vy[1] + vy[2] + vy[3]) / 4.0;
 
     double term = -vx[0] + vy[0] + vx[1] + vy[1] - vx[2] - vy[2] + vx[3] - vy[3];
-    Omega = term / (8.0 * h);
+    Omega = term / (4.0 * (CHASSIS_HALF_LENGTH + CHASSIS_HALF_WIDTH));
 }
 
 void FourWheelSteeringKinematics::updateOdometryTwist(geometry_msgs::msg::Twist& twist) {

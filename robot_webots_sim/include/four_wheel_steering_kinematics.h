@@ -66,6 +66,7 @@ private:
     // 四舵轮角度
     std::array<double, 4> steer_angles_;
 
-    static constexpr double CHASSIS_HALF_WIDTH = 0.175;
-    static constexpr double WHEEL_RADIUS = 0.05;
+    static constexpr double CHASSIS_HALF_LENGTH = 0.235; // 纵向轮间距
+    static constexpr double CHASSIS_HALF_WIDTH = 0.209; // 横向轮间距
+    static constexpr double WHEEL_RADIUS = 0.075;
 };

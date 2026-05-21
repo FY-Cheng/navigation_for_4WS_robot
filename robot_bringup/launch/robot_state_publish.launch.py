@@ -3,7 +3,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import Command
+from launch.substitutions import Command, FindExecutable
 from launch.substitutions import LaunchConfiguration
 from launch.substitutions import PythonExpression
 from launch_ros.actions import Node
@@ -25,15 +25,12 @@ def generate_launch_description():
     )
 
 
-    urdf_file = os.path.join(
+    xacro_file = os.path.join(
         get_package_share_directory('robot_description'),
         'urdf',
-        'four_wheel_steering_robot.urdf'
+        'webots_four_wheel_steering_robot.urdf.xacro'
     )
-
-    with open(urdf_file, 'r') as f:
-        robot_description = f.read()
-
+    robot_description = Command([FindExecutable(name="xacro"), " ", xacro_file])
 
     robot_state_publisher_node = Node (
         package='robot_state_publisher',
